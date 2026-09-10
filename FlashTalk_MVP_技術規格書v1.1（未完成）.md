@@ -1,6 +1,6 @@
-# FlashTalk v1.0 MVP 技術規格書
+# FlashTalk v1 MVP 技術規格書
 
-> **Version：v1.0.0**  
+> **Version：v1.1.0**  
 > **產品名稱：FlashTalk**  
 > **文件類型：Technical Specification**  
 > **對應需求文件：FlashTalk v1.0 MVP PRD v1.0.0**
@@ -590,5 +590,191 @@ FORGOT_PASSWORD --> EMAIL_VERIFICATION
 EMAIL_VERIFICATION --> PASSWORD_RESET
 
 PASSWORD_RESET --> LOGIN
-```        
+```  
 
+# 五、User Profile
+
+## 5.1 User
+
+```text
+users
+```
+
+欄位：
+
+```text
+id
+username
+email
+password_hash
+email_verified_at
+
+nickname
+avatar_url
+status
+
+created_at
+updated_at
+```
+
+建議：
+
+```text
+id: UUID
+username: UNIQUE
+email: UNIQUE
+```
+
+Status：
+
+```text
+PENDING_VERIFICATION
+ACTIVE
+SUSPENDED
+DELETED
+```
+
+---
+
+# 六、Interest 興趣
+
+```text
+interests
+```
+
+欄位：
+
+```text
+id
+name
+enabled
+sort
+created_at
+updated_at
+```
+
+User 與 Interest：
+
+```text
+user_interests
+<!-- 建立中間table -->
+
+user_id
+interest_id
+
+users
+      \
+       user_interests
+      /
+interests
+```
+
+使用者可選擇：
+
+```text
+1～3 個官方 Interest
+```
+
+流程：
+```
+flowchart TD
+
+A[App 選擇 Interest]
+-->B[送出 interestIds]
+
+B-->C{數量是否 1～3?}
+
+C--否-->D[Reject]
+
+C--是-->E[查詢 Interests]
+
+E-->F{全部存在且 enabled?}
+
+F--否-->D
+
+F--是-->G[更新 user_interests]
+
+G-->H[完成]
+```
+
+---
+
+# 七、Matching
+
+配對模式：
+
+```text
+RANDOM
+INTEREST
+```
+
+Matching Queue：
+
+```text
+Node.js Memory
+```
+
+Server Restart 後由 App WebSocket reconnect 並重新加入 Queue。
+
+---
+
+# 八、Random Matching
+
+流程：
+
+```mermaid
+flowchart TD
+
+A[User Join Random Matching]
+-->B[Validate User State]
+
+B-->C{User Can Join Matching?}
+
+C--No-->D[Reject matching.join]
+
+C--Yes-->E[Get Users From Random Queue]
+
+E-->F[Filter Invalid Candidates]
+
+F-->G{Valid Candidate Exists?}
+
+G--No-->H[Add User To Random Queue]
+
+H-->I[Set User State = MATCHING]
+
+I-->J[Send matching.waiting]
+
+J-->K[Wait For Match / Cancel / Disconnect]
+
+G--Yes-->L[Randomly Select One Candidate]
+
+L-->M[Revalidate Both Users]
+
+M-->N{Both Users Still Valid?}
+
+N--No-->E
+
+N--Yes-->O[Remove Both Users From Queue]
+
+O-->P[Set Both Users State = CHATTING]
+
+P-->Q[Create Chat Room]
+
+Q-->R[Create Session 1]
+
+R-->S[Join Both Sockets To Chat Room]
+
+S-->T[Send matching.found]
+
+T-->U[Both Users Enter Chat Room]
+```
+
+排除：
+
+```text
+Self
+Blocked User
+User Already Chatting
+```
+
+---

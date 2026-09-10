@@ -619,7 +619,7 @@ DELETED
 
 ---
 
-# 六、Interest
+# 六、Interest 興趣
 
 ```text
 interests
@@ -640,15 +640,44 @@ User 與 Interest：
 
 ```text
 user_interests
+<!-- 建立中間table -->
 
 user_id
 interest_id
+
+users
+      \
+       user_interests
+      /
+interests
 ```
 
 使用者可選擇：
 
 ```text
 1～3 個官方 Interest
+```
+
+流程：
+```
+flowchart TD
+
+A[App 選擇 Interest]
+-->B[送出 interestIds]
+
+B-->C{數量是否 1～3?}
+
+C--否-->D[Reject]
+
+C--是-->E[查詢 Interests]
+
+E-->F{全部存在且 enabled?}
+
+F--否-->D
+
+F--是-->G[更新 user_interests]
+
+G-->H[完成]
 ```
 
 ---
@@ -679,22 +708,48 @@ Server Restart 後由 App WebSocket reconnect 並重新加入 Queue。
 ```mermaid
 flowchart TD
 
-A[Join Random Matching]
--->B[Add User To Random Queue]
+A[User Join Random Matching]
+-->B[Validate User State]
 
-B-->C{Waiting User Exists?}
+B-->C{User Can Join Matching?}
 
-C--No-->D[Wait]
+C--No-->D[Reject matching.join]
 
-C--Yes-->E[Get Earliest Waiting User]
+C--Yes-->E[Get Users From Random Queue]
 
-E-->F[Validate Users]
+E-->F[Filter Invalid Candidates]
 
-F-->G[Create Chat Room]
+F-->G{Valid Candidate Exists?}
 
-G-->H[Create Session 1]
+G--No-->H[Add User To Random Queue]
 
-H-->I[Send matching.found]
+H-->I[Set User State = MATCHING]
+
+I-->J[Send matching.waiting]
+
+J-->K[Wait For Match / Cancel / Disconnect]
+
+G--Yes-->L[Randomly Select One Candidate]
+
+L-->M[Revalidate Both Users]
+
+M-->N{Both Users Still Valid?}
+
+N--No-->E
+
+N--Yes-->O[Remove Both Users From Queue]
+
+O-->P[Set Both Users State = CHATTING]
+
+P-->Q[Create Chat Room]
+
+Q-->R[Create Session 1]
+
+R-->S[Join Both Sockets To Chat Room]
+
+S-->T[Send matching.found]
+
+T-->U[Both Users Enter Chat Room]
 ```
 
 排除：
