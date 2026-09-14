@@ -1543,9 +1543,75 @@ User B：繼續
 重新開始 15 分鐘
 ```
 
-Session #2 延續原本 Chat Room 與聊天上下文。
-
 雙方不需要重新配對，也不建立新的陌生人配對關係。
+
+---
+
+### 14.Session #1 與 Session #2 聊天紀錄顯示
+
+Session #1 與 Session #2 為同一組陌生人配對關係中的兩個獨立聊天階段。
+
+當 Session #1 正常結束，且雙方於 Continue Decision 中皆選擇「再聊 15 分鐘」後，系統建立 Session #2。
+
+Session #2 開始後：
+
+> **不再向雙方顯示 Session #1 的聊天訊息。**
+
+Session #2 為新的聊天階段，使用者進入 Session #2 時，聊天訊息顯示區域從新的 Session 開始。
+
+流程：
+
+```text
+
+Session #1
+
+15 分鐘
+
+    │
+
+    ▼
+
+Normal End
+
+    │
+
+    ▼
+
+Continue Decision
+
+    │
+
+    ▼
+
+雙方皆同意繼續
+
+    │
+
+    ▼
+
+Session #2
+
+15 分鐘
+
+    │
+
+    └── 不顯示 Session #1 訊息
+
+```
+
+此設計將兩次 Chat Session 區分為不同的關係階段：
+
+| Chat Session | 階段定位 | 聊天紀錄 |
+
+|---|---|---|
+
+| Session #1 | 初次探索與認識 | 不帶入 Session #2 顯示 |
+
+| Session #2 | 雙方主動選擇繼續後的交流 | 可於 Connection 成立後延續 |
+
+Session #1 不帶入 Session #2，不代表其資料必須於 Session #2 建立時立即從 Server 永久刪除。
+
+Session #1 的實際資料保存時間、刪除機制、安全緩衝、Report 與 Moderation 所需資料保存方式，由後續資料保存與安全相關章節統一定義。
 
 ---
 
