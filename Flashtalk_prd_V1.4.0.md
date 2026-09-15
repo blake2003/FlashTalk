@@ -1,6 +1,6 @@
-# FlashTalk v1.3.0 MVP 產品需求規格書（PRD）
+# FlashTalk v1.4.0 MVP 產品需求規格書（PRD）
 
-> **Version：v1.3.0**  
+> **Version：v1.4.0**  
 > **產品名稱：FlashTalk**
 
 ---
@@ -1615,7 +1615,7 @@ Session #1 的實際資料保存時間、刪除機制、安全緩衝、Report �
 
 ---
 
-### 14. 第二次 Chat Session 結束
+### 15. 第二次 Chat Session 結束
 
 Session #2 最長為 **15 分鐘**。
 
@@ -1643,7 +1643,141 @@ Connection 的建立條件與決策流程由第十章「Connection（建立聯�
 
 ---
 
-### 15. 主動離開
+### 16. Session #2 與 Connection Chat 的聊天紀錄延續
+
+Session #2 為雙方完成第一次聊天後，皆主動選擇繼續交流才建立的第二階段 Chat Session。
+
+若 Session #2 正常結束，且雙方後續皆同意建立 Connection：
+
+> **Session #2 的聊天訊息將作為 Connection Chat 的可見歷史紀錄保留。**
+
+Connection 建立後，不重新顯示 Session #1 的聊天訊息。
+
+因此 Connection Chat 的可見聊天紀錄由以下內容組成：
+
+1. Session #2 的聊天訊息
+
+2. Connection 建立狀態提示
+
+3. Connection 建立後產生的新訊息
+
+概念流程：
+
+```text
+
+Session #1
+
+    │
+
+    │ 不帶入下一階段顯示
+
+    ▼
+
+Session #2
+
+    │
+
+    │ 雙方同意建立 Connection
+
+    ▼
+
+Connection Created
+
+    │
+
+    ▼
+
+Connection Chat
+
+    │
+
+    ├── Session #2 歷史訊息
+
+    │
+
+    ├── Connection 建立提示
+
+    │
+
+    └── Connection 後的新訊息
+
+```
+
+使用者介面應讓 Session #2 至 Connection Chat 的轉換保持自然延續。
+
+例如：
+
+```text
+
+──────── Session #2 ────────
+
+A：你剛剛說你也喜歡去日本？
+
+B：對啊，我去年去了北海道
+
+A：我超想去 😂
+
+B：冬天真的很漂亮
+
+────────────────────────────
+
+你們已建立 Connection
+
+現在可以繼續聊天
+
+────────────────────────────
+
+A：所以你最推薦北海道哪裡？
+
+```
+
+Connection 建立後：
+
+- 不再受到 15 分鐘 Chat Session 時間限制。
+
+- 不再進入 Chat Session Decision。
+
+- Session #2 訊息持續對雙方可見。
+
+- Session #1 訊息不重新出現在 Connection Chat。
+
+- Connection 後的新訊息接續於 Session #2 之後。
+
+此設計的產品階段概念為：
+
+```text
+
+Session #1
+
+第一次遇見
+
+    │
+
+    ▼
+
+Session #2
+
+雙方選擇繼續
+
+    │
+
+    ▼
+
+Connection
+
+雙方選擇留下
+
+```
+
+其核心設計原則為：
+
+> **第一次是遇見，第二次是選擇，Connection 是留下。**
+
+聊天紀錄的實際 Server 儲存結構、資料轉移方式、Conversation 關聯方式與 Data Retention Policy 不於本章限定，於後續技術規格與資料保存規格中統一定義。
+
+---
+
+### 17. 主動離開
 
 使用者可依第七章規則，在 Chat Session 進行期間主動離開聊天室。
 
@@ -1674,7 +1808,7 @@ ACTIVE SESSION
 
 ---
 
-### 16. Chat Session 核心規則
+### 18. Chat Session 核心規則
 
 FlashTalk Chat Session 核心規則統一如下：
 
@@ -2347,29 +2481,800 @@ Session #1
 
 ## 十、Connection（建立聯繫）
 
-第二次聊天結束後：
+Connection 代表兩名使用者完成兩階段限時聊天後，透過雙向同意建立的持續聯繫關係。
 
-系統詢問雙方：
+FlashTalk 不以傳統「好友邀請」或「追蹤」作為陌生人關係建立方式。
 
-> 是否願意建立 Connection？
+使用者必須依序完成：
 
-只有：
+```text
+陌生人配對
+    │
+    ▼
+Session #1
+15 分鐘
+    │
+    ▼
+Continue Decision
+    │
+    ▼
+雙方同意繼續
+    │
+    ▼
+Session #2
+15 分鐘
+    │
+    ▼
+Connection Decision
+    │
+    ▼
+雙方同意建立 Connection
+    │
+    ▼
+Connected
+```
 
-> **雙方皆同意**
+Connection 的核心概念為：
 
-才會：
+> **雙方經過兩階段聊天後，都明確選擇願意繼續保持聯繫。**
 
-- 建立 Connection
-- 解鎖私訊功能
+---
 
-若：
+### 1. Connection 定義
 
-任一方不同意
+Connection 是 FlashTalk 中雙方建立長期聯繫關係的正式狀態。
 
-則：
+Connection 不等同於：
+
+- Follow
+- Follower
+- Friend Request
+- 單方面加好友
+- 單方面收藏使用者
+
+Connection 必須由雙方共同確認後才能成立。
+
+不存在單方面建立 Connection 的情況。
+
+關係流程：
+
+```text
+STRANGER
+    │
+    ▼
+MATCHED
+    │
+    ▼
+Session #1
+    │
+    ▼
+Session #2
+    │
+    ▼
+Connection Decision
+    │
+    ▼
+CONNECTED
+```
+
+MVP 統一使用：
+
+> **Connection**
+
+作為雙方持續聯繫關係的產品名稱，不另外建立 Friend / Follow 等其他社交關係。
+
+---
+
+### 2. Connection Decision 觸發條件
+
+只有 Session #2 因 15 分鐘聊天時間自然到期並形成：
+
+> **Normal End**
+
+才會進入 Connection Decision。
+
+流程：
+
+```text
+Session #2
+15 分鐘
+    │
+    ▼
+Normal End
+    │
+    ▼
+Connection Decision
+```
+
+若 Session #2 屬於：
+
+- Early End
+- Abnormal End
+
+則不進入 Connection Decision。
+
+例如：
+
+```text
+Session #2
+    │
+    ├── 使用者主動離開
+    ├── 檢舉並離開
+    ├── 長時間斷線
+    ├── Safety 強制終止
+    └── 系統強制終止
+            │
+            ▼
+        聊天結束
+            │
+            ▼
+不進入 Connection Decision
+```
+
+Session End 類型依第九章定義。
+
+---
+
+### 3. Connection Decision
+
+Session #2 Normal End 後，系統詢問雙方：
+
+> **是否願意和對方建立 Connection？**
+
+產品介面可使用較自然的使用者文案，例如：
+
+```text
+想繼續和對方保持聯繫嗎？
+
+[ 就聊到這裡 ]
+
+[ 建立 Connection ]
+```
+
+雙方分別獨立完成選擇。
+
+Connection Decision 採用第九章定義的 Decision 共通機制。
+
+---
+
+### 4. Connection Decision 時間
+
+Connection Decision 的決策時間為：
+
+> **2 分鐘（120 秒）**
+
+進入 Connection Decision 後，系統開始 Decision Timer。
+
+例如：
+
+```text
+02:00
+  ↓
+01:59
+  ↓
+01:30
+  ↓
+01:00
+  ↓
+00:30
+  ↓
+00:00
+```
+
+Decision Timer 應持續顯示於 Connection Decision 畫面。
+
+不提供：
+
+- 額外倒數警告
+- 剩餘 1 分鐘通知
+- 剩餘 30 秒通知
+- 剩餘 10 秒警告
+- 震動提醒
+- 音效提醒
+- 強制彈出提示
+
+Decision Timer 以 Server 管理的到期時間為準。
+
+---
+
+### 5. Connection Decision 共通規則
+
+Connection Decision 完全沿用第九章定義的 Blind Decision 共通規則。
+
+包含：
+
+- 雙方獨立選擇
+- 雙方選擇互相不可見
+- 選擇送出後不可修改
+- 雙方皆同意才成立
+- 任一方不同意則 Decision 不成立
+- 任一方不同意後不需要繼續等待
+- Decision Timeout 視為不同意
+- 不公開是哪一方不同意
+- 不公開對方是否發生 Timeout
+- 暫時性網路中斷不暫停 Decision Timer
+- 重新連線後可於剩餘時間內恢復 Decision
+
+Connection Decision 不另外建立另一套決策規則。
+
+---
+
+### 6. Connection 建立條件
+
+只有雙方皆在 120 秒內選擇：
+
+> **建立 Connection**
+
+Connection Decision 才成立。
+
+例如：
+
+```text
+User A：CONNECT
+User B：CONNECT
+        │
+        ▼
+Decision Success
+        │
+        ▼
+Create Connection
+        │
+        ▼
+CONNECTED
+```
+
+Connection 建立必須為雙向同意。
+
+不得因單一使用者選擇 CONNECT 而建立 Connection。
+
+---
+
+### 7. Connection Decision 不成立
+
+以下任一情況發生時，Connection Decision 不成立：
+
+#### 情況 A：任一方選擇不建立 Connection
+
+```text
+User A：CONNECT
+User B：END
+        │
+        ▼
+Connection Not Created
+        │
+        ▼
+聊天結束
+```
+
+#### 情況 B：雙方皆選擇不建立 Connection
+
+```text
+User A：END
+User B：END
+      │
+      ▼
+Connection Not Created
+      │
+      ▼
+聊天結束
+```
+
+#### 情況 C：任一方 Decision Timeout
+
+```text
+User A：CONNECT
+User B：TIMEOUT
+        │
+        ▼
+TIMEOUT = END
+        │
+        ▼
+Connection Not Created
+        │
+        ▼
+聊天結束
+```
+
+Connection Decision 不成立後：
 
 - 不建立 Connection
-- 聊天室進入安全緩衝區
+- 不建立 Connection Chat
+- 不加入 Connection List
+- 雙方仍維持非 Connection 關係
+- 不公開是哪一方不同意
+- 不公開是否有人發生 Timeout
+
+---
+
+### 8. Connection Decision 結果隱私
+
+Connection Decision 不成立時，不向任何一方公開另一方的實際選擇。
+
+不顯示：
+
+```text
+對方拒絕建立 Connection
+```
+
+不顯示：
+
+```text
+對方不想繼續和你聯絡
+```
+
+不顯示：
+
+```text
+對方沒有在時間內做出選擇
+```
+
+系統統一使用中性結果，例如：
+
+> **本次聊天已結束。**
+
+避免讓 Connection Decision 形成額外的拒絕壓力。
+
+---
+
+### 9. Connection 建立
+
+當 Connection Decision 成立後，系統建立雙方的 Connection 關係。
+
+流程：
+
+```text
+Connection Decision
+        │
+        ▼
+雙方 CONNECT
+        │
+        ▼
+Create Connection
+        │
+        ▼
+CONNECTED
+```
+
+Connection 建立後：
+
+- 雙方正式成為 Connection
+- 雙方可以持續聊天
+- 不再受到 15 分鐘 Chat Session 限制
+- 不再進入 Continue Decision
+- 不再進入 Connection Decision
+- 建立 Connection Chat
+- Connection 顯示於雙方的 Connection List
+- Session #2 聊天紀錄延續至 Connection Chat
+
+---
+
+### 10. Connection Chat
+
+Connection 建立後，雙方進入：
+
+> **Connection Chat**
+
+Connection Chat 為雙方建立 Connection 後使用的持續聊天空間。
+
+Connection Chat 不再使用陌生人 Chat Session 的 15 分鐘限制。
+
+因此：
+
+```text
+Connection Chat
+      │
+      ├── 無 15 分鐘限制
+      ├── 無 Chat Session Timer
+      ├── 無 Continue Decision
+      └── 無 Connection Decision
+```
+
+只要 Connection 關係仍存在，雙方即可持續使用 Connection Chat。
+
+---
+
+### 11. Connection Chat 訊息功能
+
+MVP 階段的 Connection Chat 沿用陌生人聊天室的基本訊息功能。
+
+支援：
+
+- 文字訊息
+- Emoji
+- Reply
+
+Reply 可引用原訊息的基本內容與上下文，但不建立獨立 Thread。
+
+MVP 不提供：
+
+- 圖片
+- 影片
+- 檔案
+- 語音訊息
+- 外部連結
+- 訊息複製
+- 訊息刪除
+- 訊息收回
+- 訊息編輯
+
+Connection Chat 的進階訊息能力不列入目前 MVP 核心範圍。
+
+---
+
+### 12. Session #2 聊天紀錄延續
+
+Connection 建立後：
+
+> **只將 Session #2 作為 Connection Chat 的可見歷史聊天紀錄延續。**
+
+Session #1 不重新顯示於 Connection Chat。
+
+因此：
+
+```text
+Session #1
+    │
+    │ 不帶入 Connection Chat 顯示
+    ▼
+Session #2
+    │
+    │ 雙方同意建立 Connection
+    ▼
+Connection Created
+    │
+    ▼
+Connection Chat
+    │
+    ├── Session #2 歷史訊息
+    ├── Connection 建立提示
+    └── Connection 建立後的新訊息
+```
+
+Connection Chat 的使用者可見聊天紀錄為：
+
+1. Session #2 聊天訊息
+2. Connection 建立狀態提示
+3. Connection 建立後產生的新訊息
+
+---
+
+### 13. Session #1 不重新顯示
+
+Session #1 屬於雙方第一次陌生人探索聊天階段。
+
+即使雙方最終成功建立 Connection：
+
+> **Session #1 訊息仍不重新出現在 Connection Chat。**
+
+不得因 Connection 建立而重新恢復 Session #1 的使用者可見聊天紀錄。
+
+產品階段概念為：
+
+```text
+Session #1
+第一次遇見
+    │
+    ▼
+Session #2
+雙方選擇繼續
+    │
+    ▼
+Connection
+雙方選擇留下
+```
+
+核心設計原則：
+
+> **第一次是遇見，第二次是選擇，Connection 是留下。**
+
+Session #1 是否仍於 Server 保存，以及實際保存期限，不由 Connection 的使用者介面可見性決定。
+
+其資料保存、刪除、安全緩衝、Report 與 Moderation 規則由後續 Data Retention 與 Safety 相關規格統一定義。
+
+---
+
+### 14. Connection 建立提示
+
+Connection 建立成功後，Connection Chat 應於 Session #2 訊息與後續 Connection 訊息之間顯示狀態提示。
+
+例如：
+
+```text
+A：你剛剛說你也喜歡去日本？
+B：對啊，我去年去了北海道
+A：我超想去 😂
+B：冬天真的很漂亮
+
+────────────────────────
+
+你們已建立 Connection
+
+現在可以繼續聊天
+
+────────────────────────
+
+A：所以你最推薦北海道哪裡？
+```
+
+此提示用於明確區分：
+
+```text
+限時陌生人聊天
+        ↓
+Connection
+        ↓
+持續聊天
+```
+
+Connection 建立後不需要重新建立使用者可感知的新聊天流程。
+
+產品介面應讓 Session #2 至 Connection Chat 的轉換保持自然延續。
+
+---
+
+### 15. Connection List
+
+Connection 建立後，雙方應出現在彼此的：
+
+> **Connection List**
+
+Connection List 為使用者重新進入既有 Connection Chat 的主要入口。
+
+MVP 至少顯示：
+
+- 對方頭像
+- 對方暱稱
+- 最後一則訊息摘要
+- 最後訊息時間
+- 未讀訊息數量
+
+概念：
+
+```text
+Connections
+
+┌──────────────────────────┐
+│ Avatar  Alice            │
+│ 最後一則訊息內容...      │
+│                    10:32 │
+│                      ● 2 │
+└──────────────────────────┘
+
+┌──────────────────────────┐
+│ Avatar  Ian              │
+│ 哈哈哈真的 😂            │
+│                     昨天 │
+└──────────────────────────┘
+```
+
+Connection List 不等同於 Follow / Followers / Friends List。
+
+其目的僅為管理已建立 Connection 的持續聊天關係。
+
+---
+
+### 16. 已建立 Connection 的使用者不得再次互相配對
+
+當兩名使用者目前存在有效 Connection：
+
+```text
+User A ↔ User B
+     CONNECTED
+```
+
+系統不得再次將兩人進行陌生人配對。
+
+此規則同時適用於：
+
+- 興趣配對
+- 全隨機配對
+
+例如：
+
+```text
+A 與 B 已 CONNECTED
+
+A 開始興趣配對
+B 開始興趣配對
+        │
+        ▼
+A / B 不得再次互相配對
+```
+
+Connection 存在期間，雙方應透過 Connection Chat 持續聯繫，而不是重新進入陌生人配對流程。
+
+---
+
+### 17. 解除 Connection
+
+Connection 建立後，任一方皆可主動：
+
+> **解除 Connection（Unconnect）**
+
+解除 Connection 不需要另一方同意。
+
+流程：
+
+```text
+CONNECTED
+    │
+    ▼
+任一方選擇解除 Connection
+    │
+    ▼
+確認解除
+    │
+    ▼
+Connection End
+```
+
+解除 Connection 後：
+
+- Connection 關係失效
+- 雙方停止使用原 Connection Chat
+- 不再以有效 Connection 關係顯示
+- Connection Chat 不再接受新的聊天訊息
+
+解除 Connection 為單方面即可完成的關係終止操作。
+
+---
+
+### 18. 解除 Connection 與 Block 的差異
+
+解除 Connection 與 Block 為不同概念。
+
+解除 Connection 代表：
+
+> **結束目前持續聯繫關係。**
+
+Block 則屬於安全與使用者保護機制。
+
+因此：
+
+```text
+Unconnect
+≠
+Block
+```
+
+解除 Connection 本身不代表永久禁止雙方再次遇見。
+
+若未來雙方重新符合配對條件：
+
+> **仍可能再次被系統配對。**
+
+若使用者希望避免未來再次與特定使用者配對，應由後續 Block / Safety 機制定義。
+
+Block、Blacklist 與重新配對限制於安全機制相關章節統一定義。
+
+---
+
+### 19. 解除 Connection 後的聊天紀錄
+
+解除 Connection 後，原 Connection Chat 停止提供新的聊天功能。
+
+但：
+
+> **解除 Connection 不直接等同於立即永久刪除 Server 上的所有聊天資料。**
+
+聊天資料的實際處理可能涉及：
+
+- Data Retention
+- Safety Buffer
+- Report
+- Moderation
+- Account Safety
+- 系統資料保存政策
+
+因此，本章僅定義：
+
+> **解除 Connection 後，原 Connection Chat 對雙方停止作為有效聊天空間使用。**
+
+實際聊天資料保存期限與刪除方式，由後續資料保存與安全相關規格統一定義。
+
+---
+
+### 20. Connection 生命週期
+
+Connection 的基本生命週期如下：
+
+```text
+Session #2 Normal End
+          │
+          ▼
+Connection Decision
+       120 秒
+          │
+     ┌────┴─────┐
+     │          │
+雙方 CONNECT   END / TIMEOUT
+     │          │
+     ▼          ▼
+CONNECTED     聊天結束
+     │
+     ├── Connection Chat
+     ├── Connection List
+     ├── 持續聊天
+     ├── Report / Safety
+     │
+     └── Unconnect
+             │
+             ▼
+      CONNECTION ENDED
+```
+
+---
+
+### 21. Connection 與聊天紀錄生命週期
+
+使用者可見聊天紀錄的階段關係如下：
+
+```text
+Session #1
+15 分鐘
+    │
+    ▼
+Continue Decision
+    │
+    │ 雙方同意
+    ▼
+Session #2
+15 分鐘
+    │
+    │ Session #1 不顯示
+    ▼
+Connection Decision
+120 秒
+    │
+    ├── 雙方同意
+    │       │
+    │       ▼
+    │   Connection
+    │       │
+    │       ├── 保留 Session #2 可見紀錄
+    │       ├── 不恢復 Session #1
+    │       └── 持續產生 Connection 訊息
+    │
+    └── 未成立
+            │
+            ▼
+        聊天結束
+```
+
+此設計使聊天紀錄與雙方關係深化程度保持一致。
+
+---
+
+### 22. Connection 核心規則
+
+| 項目 | 規則 |
+|---|---|
+| Connection 觸發條件 | Session #2 Normal End |
+| Connection Decision | 120 秒 |
+| Decision 模式 | 雙向盲選 |
+| Decision 剩餘時間 | 顯示 |
+| Decision 主動提醒 | 不提供 |
+| 建立條件 | 雙方皆同意 |
+| 任一方不同意 | 不建立 Connection |
+| Timeout | 視為不同意 |
+| 個別選擇結果 | 不公開 |
+| Connection 建立後 | 開放持續聊天 |
+| 15 分鐘限制 | Connection 後取消 |
+| Connection Chat | 提供 |
+| Session #1 紀錄 | 不帶入、不重新顯示 |
+| Session #2 紀錄 | Connection 成功後延續顯示 |
+| Connection 後訊息 | 接續 Session #2 |
+| 訊息功能 | 文字、Emoji、Reply |
+| 圖片 / 影片 / 檔案 / 語音 | MVP 不提供 |
+| 訊息複製 / 刪除 / 收回 / 編輯 | MVP 不提供 |
+| Connection List | 提供 |
+| 已 Connection 雙方重新配對 | 不允許 |
+| 解除 Connection | 任一方可單方面解除 |
+| 解除是否需要對方同意 | 不需要 |
+| Unconnect | 不等同 Block |
+| Unconnect 後重新配對 | 未受 Block 等限制時仍可能再次配對 |
+| 解除後聊天 | 停止使用原 Connection Chat |
+| Server 資料實際刪除 | 由 Data Retention / Safety 規格定義 |
 
 ---
 
@@ -2647,4 +3552,4 @@ I--否-->O
 
 | 版本 | 日期 | 說明 |
 |------|------|------|
-| v1.3.0 | 2026-09-13 | FlashTalk MVP 第一版產品需求規格書（PRD） |
+| v1.4.0 | 2026-09-14 | FlashTalk MVP 第一版產品需求規格書（PRD） |
