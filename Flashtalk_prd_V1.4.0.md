@@ -1543,10 +1543,13 @@ User B：繼續
 重新開始 15 分鐘
 ```
 
+Session #2 延續原本 Chat Room 與聊天上下文。
+
 雙方不需要重新配對，也不建立新的陌生人配對關係。
 
 ---
 
+<<<<<<< HEAD:Flashtalk_prd_V1.4.0.md
 ### 14.Session #1 與 Session #2 聊天紀錄顯示
 
 Session #1 與 Session #2 為同一組陌生人配對關係中的兩個獨立聊天階段。
@@ -1616,6 +1619,9 @@ Session #1 的實際資料保存時間、刪除機制、安全緩衝、Report �
 ---
 
 ### 15. 第二次 Chat Session 結束
+=======
+### 14. 第二次 Chat Session 結束
+>>>>>>> parent of aa50986 (內容新增與修改):Flashtalk_prd_V1.3.0.md
 
 Session #2 最長為 **15 分鐘**。
 
