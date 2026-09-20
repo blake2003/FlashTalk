@@ -1,6 +1,6 @@
-# FlashTalk v1.4.0 MVP 產品需求規格書（PRD）
+# FlashTalk v1.5.0 MVP 產品需求規格書（PRD）
 
-> **Version：v1.4.0**  
+> **Version：v1.5.0**  
 > **產品名稱：FlashTalk**
 
 ---
@@ -1150,13 +1150,9 @@ Session 時間不因以下情況暫停：
 
 ```text
 14:32
-
 08:17
-
 03:45
-
 00:32
-
 00:00
 ```
 
@@ -1465,23 +1461,14 @@ Session #1 結束
 例如：
 
 ```text
-
 01:00
-
   ↓
-
 00:45
-
   ↓
-
 00:30
-
   ↓
-
 00:15
-
   ↓
-
 00:00
 ```
 
@@ -1549,8 +1536,7 @@ Session #2 延續原本 Chat Room 與聊天上下文。
 
 ---
 
-<<<<<<< HEAD:Flashtalk_prd_V1.4.0.md
-### 14.Session #1 與 Session #2 聊天紀錄顯示
+### 14. Session #1 與 Session #2 聊天紀錄顯示
 
 Session #1 與 Session #2 為同一組陌生人配對關係中的兩個獨立聊天階段。
 
@@ -1565,51 +1551,30 @@ Session #2 為新的聊天階段，使用者進入 Session #2 時，聊天訊息
 流程：
 
 ```text
-
 Session #1
-
 15 分鐘
-
     │
-
     ▼
-
 Normal End
-
     │
-
     ▼
-
 Continue Decision
-
     │
-
     ▼
-
 雙方皆同意繼續
-
     │
-
     ▼
-
 Session #2
-
 15 分鐘
-
     │
-
     └── 不顯示 Session #1 訊息
-
 ```
 
 此設計將兩次 Chat Session 區分為不同的關係階段：
 
 | Chat Session | 階段定位 | 聊天紀錄 |
-
 |---|---|---|
-
 | Session #1 | 初次探索與認識 | 不帶入 Session #2 顯示 |
-
 | Session #2 | 雙方主動選擇繼續後的交流 | 可於 Connection 成立後延續 |
 
 Session #1 不帶入 Session #2，不代表其資料必須於 Session #2 建立時立即從 Server 永久刪除。
@@ -1619,9 +1584,6 @@ Session #1 的實際資料保存時間、刪除機制、安全緩衝、Report �
 ---
 
 ### 15. 第二次 Chat Session 結束
-=======
-### 14. 第二次 Chat Session 結束
->>>>>>> parent of aa50986 (內容新增與修改):Flashtalk_prd_V1.3.0.md
 
 Session #2 最長為 **15 分鐘**。
 
@@ -1662,51 +1624,30 @@ Connection 建立後，不重新顯示 Session #1 的聊天訊息。
 因此 Connection Chat 的可見聊天紀錄由以下內容組成：
 
 1. Session #2 的聊天訊息
-
 2. Connection 建立狀態提示
-
 3. Connection 建立後產生的新訊息
 
 概念流程：
 
 ```text
-
 Session #1
-
     │
-
     │ 不帶入下一階段顯示
-
     ▼
-
 Session #2
-
     │
-
     │ 雙方同意建立 Connection
-
     ▼
-
 Connection Created
-
     │
-
     ▼
-
 Connection Chat
-
     │
-
     ├── Session #2 歷史訊息
-
     │
-
     ├── Connection 建立提示
-
     │
-
     └── Connection 後的新訊息
-
 ```
 
 使用者介面應讓 Session #2 至 Connection Chat 的轉換保持自然延續。
@@ -1714,65 +1655,39 @@ Connection Chat
 例如：
 
 ```text
-
 ──────── Session #2 ────────
-
 A：你剛剛說你也喜歡去日本？
-
 B：對啊，我去年去了北海道
-
 A：我超想去 😂
-
 B：冬天真的很漂亮
-
 ────────────────────────────
-
 你們已建立 Connection
-
 現在可以繼續聊天
-
 ────────────────────────────
-
 A：所以你最推薦北海道哪裡？
-
 ```
 
 Connection 建立後：
 
 - 不再受到 15 分鐘 Chat Session 時間限制。
-
 - 不再進入 Chat Session Decision。
-
 - Session #2 訊息持續對雙方可見。
-
 - Session #1 訊息不重新出現在 Connection Chat。
-
 - Connection 後的新訊息接續於 Session #2 之後。
 
 此設計的產品階段概念為：
 
 ```text
-
 Session #1
-
 第一次遇見
-
     │
-
     ▼
-
 Session #2
-
 雙方選擇繼續
-
     │
-
     ▼
-
 Connection
-
 雙方選擇留下
-
 ```
 
 其核心設計原則為：
@@ -2204,9 +2119,7 @@ Decision Timer 只作為剩餘時間顯示。
 
 ```text
 已送出你的選擇
-
 等待對方選擇⋯
-
 00:37
 ```
 
@@ -2631,9 +2544,7 @@ Session #2 Normal End 後，系統詢問雙方：
 
 ```text
 想繼續和對方保持聯繫嗎？
-
 [ 就聊到這裡 ]
-
 [ 建立 Connection ]
 ```
 
@@ -3125,39 +3036,132 @@ Connection End
 
 ---
 
-### 18. 解除 Connection 與 Block 的差異
+### 18. 解除 Connection 後的重新配對
 
-解除 Connection 與 Block 為不同概念。
+解除 Connection（Unconnect）代表：
 
-解除 Connection 代表：
+> **結束目前雙方已建立的持續聯繫關係。**
 
-> **結束目前持續聯繫關係。**
+解除 Connection 不代表其中一方存在違規或安全問題，因此不建立永久性的配對排除關係。
 
-Block 則屬於安全與使用者保護機制。
+但為避免雙方剛解除 Connection 後立即再次透過陌生人配對遇到彼此，系統應於 Connection 解除後建立：
 
-因此：
+> **Pair Cooldown**
+
+流程：
 
 ```text
-Unconnect
-≠
-Block
+CONNECTED
+    │
+    ▼
+任一方解除 Connection
+    │
+    ▼
+CONNECTION ENDED
+    │
+    ▼
+建立 Pair Cooldown
+    │
+    ▼
+Cooldown 有效期間內
+雙方不得再次互相配對
 ```
 
-解除 Connection 本身不代表永久禁止雙方再次遇見。
+Pair Cooldown 到期後：
 
-若未來雙方重新符合配對條件：
+> 若雙方帳號狀態正常，且符合當下配對條件，未來仍可能再次透過系統配對。
 
-> **仍可能再次被系統配對。**
+若再次配對成功，雙方視為新的陌生人配對關係，必須重新經歷完整流程：
 
-若使用者希望避免未來再次與特定使用者配對，應由後續 Block / Safety 機制定義。
+```text
+Match
+  ↓
+Session #1
+  ↓
+Continue Decision
+  ↓
+Session #2
+  ↓
+Connection Decision
+  ↓
+Connection
+```
 
-Block、Blacklist 與重新配對限制於安全機制相關章節統一定義。
+過去曾建立 Connection 不會讓新的配對直接恢復原 Connection。
 
 ---
 
-### 19. 解除 Connection 後的聊天紀錄
+### 19. Unconnect 與 Report 的差異
+
+FlashTalk MVP 不提供一般使用者自由使用的 Block / Unblock 功能。
+
+使用者若單純不希望繼續維持目前 Connection，應使用：
+
+> **Unconnect**
+
+若涉及：
+
+- 騷擾
+- 色情或不當內容
+- 威脅
+- 仇恨或歧視
+- 詐騙
+- 垃圾訊息
+- 冒充
+- 其他安全問題
+
+則應使用：
+
+> **Report**
+
+兩者目的不同：
+
+| 操作 | 目的 | 是否代表安全事件 |
+|---|---|---|
+| Unconnect | 結束目前 Connection 關係 | 否 |
+| Report | 回報可能存在的不當行為 | 是 |
+
+基本流程：
+
+```text
+單純不想繼續聯絡
+        │
+        ▼
+    Unconnect
+        │
+        ▼
+Connection End
+        │
+        ▼
+ Pair Cooldown
+```
+
+安全或違規問題：
+
+```text
+發現不當行為
+      │
+      ▼
+    Report
+      │
+      ▼
+Safety Mechanism
+```
+
+Report 後的安全隔離、聊天紀錄保存與 Moderation 機制由第十一章「安全機制（Safety）」統一定義。
+
+---
+
+### 20. 解除 Connection 後的聊天紀錄
 
 解除 Connection 後，原 Connection Chat 停止提供新的聊天功能。
+
+雙方：
+
+- 不再維持有效 Connection
+- 不再透過原 Connection Chat 傳送新訊息
+- 不再以有效 Connection 關係顯示
+- 進入 Pair Cooldown
 
 但：
 
@@ -3176,11 +3180,11 @@ Block、Blacklist 與重新配對限制於安全機制相關章節統一定義�
 
 > **解除 Connection 後，原 Connection Chat 對雙方停止作為有效聊天空間使用。**
 
-實際聊天資料保存期限與刪除方式，由後續資料保存與安全相關規格統一定義。
+實際聊天資料保存期限、使用者可見期限與刪除方式，由後續資料保存與安全相關規格統一定義。
 
 ---
 
-### 20. Connection 生命週期
+### 21. Connection 生命週期
 
 Connection 的基本生命週期如下：
 
@@ -3207,11 +3211,37 @@ CONNECTED     聊天結束
              │
              ▼
       CONNECTION ENDED
+             │
+             ▼
+        Pair Cooldown
+             │
+             ▼
+        Cooldown 到期
+             │
+             ▼
+未來符合條件時可再次配對
 ```
+
+若 Connection Chat 中發生安全問題：
+
+```text
+CONNECTED
+    │
+    ▼
+Connection Chat
+    │
+    ▼
+Report
+    │
+    ▼
+Safety Mechanism
+```
+
+Report 不屬於一般 Connection 關係管理，其後續處理由第十一章定義。
 
 ---
 
-### 21. Connection 與聊天紀錄生命週期
+### 22. Connection 與聊天紀錄生命週期
 
 使用者可見聊天紀錄的階段關係如下：
 
@@ -3247,11 +3277,46 @@ Connection Decision
         聊天結束
 ```
 
-此設計使聊天紀錄與雙方關係深化程度保持一致。
+若 Connection 後解除關係：
+
+```text
+Connection Chat
+      │
+      ▼
+  Unconnect
+      │
+      ▼
+Connection End
+      │
+      ├── 停止新的聊天
+      │
+      └── Pair Cooldown
+```
+
+若涉及安全問題：
+
+```text
+Connection Chat
+      │
+      ▼
+    Report
+      │
+      ▼
+Safety Mechanism
+```
+
+此設計將：
+
+- 關係建立
+- 關係解除
+- 重新配對限制
+- 安全事件
+
+分為不同機制處理。
 
 ---
 
-### 22. Connection 核心規則
+### 23. Connection 核心規則
 
 | 項目 | 規則 |
 |---|---|
@@ -3277,123 +3342,700 @@ Connection Decision
 | 已 Connection 雙方重新配對 | 不允許 |
 | 解除 Connection | 任一方可單方面解除 |
 | 解除是否需要對方同意 | 不需要 |
-| Unconnect | 不等同 Block |
-| Unconnect 後重新配對 | 未受 Block 等限制時仍可能再次配對 |
+| Unconnect 後 | 建立 Pair Cooldown |
+| Pair Cooldown 期間 | 雙方不得互相配對 |
+| Pair Cooldown 到期 | 符合配對條件時可再次配對 |
+| 再次配對 | 必須重新經歷完整 Session #1 → Session #2 → Connection 流程 |
+| Block / Unblock | MVP 不提供 |
+| 安全問題 | 使用 Report |
+| Report 後處理 | 由 Safety 機制定義 |
 | 解除後聊天 | 停止使用原 Connection Chat |
 | Server 資料實際刪除 | 由 Data Retention / Safety 規格定義 |
 
 ---
 
-## 十一、安全機制（Safety）
+## 十一、安全與配對保護機制（Safety & Matching Protection）
 
-系統透過「配對冷卻（Match Cooldown）」、「檢舉（Report）」及「黑名單（Blacklist）」三項機制，兼顧使用者安全與配對效率。
+FlashTalk v1 MVP 的安全與配對保護機制，主要聚焦於避免短時間內重複配對、降低重複遇見相同使用者所造成的負面體驗，並維持陌生人配對的新鮮感。
 
----
+v1 MVP 主要提供：
 
-### 配對冷卻（Match Cooldown）
+> **配對冷卻（Pair Cooldown）**
 
-每次聊天室結束後，系統將自動建立雙方的暫時性配對冷卻時間。
+Pair Cooldown 為系統自動執行的配對限制機制，不需要使用者手動設定或解除。
 
-#### 規則
-
-- 聊天室結束後，雙方於配對冷卻期間內不會再次互相配對。
-- 配對冷卻期間內，配對系統將暫時排除雙方互相配對。
-- 配對冷卻時間結束後，系統將自動解除該限制，雙方可再次互相配對。
-- 配對冷卻時間由系統統一管理，可依平台營運需求於後台調整，不對使用者公開設定值。
-- 配對冷卻機制由系統自動執行，使用者無須任何操作。
-
-#### 配對冷卻流程
-
-當聊天室結束時，系統將自動建立一筆配對冷卻紀錄。
-
-配對冷卻紀錄包含：
-
-- User A
-- User B
-- 建立時間
-- 到期時間
-
-配對服務於媒合候選人時，將先檢查是否存在尚未到期的配對冷卻紀錄。
-
-若存在有效紀錄，則暫時排除雙方互相配對；若紀錄已到期，則自動失效，不需額外解除或人工操作。
-
-配對冷卻僅影響該兩位使用者之間的配對，不影響其與其他使用者的正常配對流程。
-
-#### 設計目的
-
-- 避免短時間內反覆配對到同一位使用者。
-- 提升陌生人聊天的新鮮感。
-- 降低人數不足造成的重複配對情形。
-- 不永久排除任何正常使用者，維持配對新鮮感。
+檢舉（Report）、Moderation、安全案件審核等進階安全管理功能暫不納入 v1 MVP 開發範圍。
 
 ---
 
-### 檢舉（Report）
+### 1. Pair Cooldown 定義
 
-使用者可於聊天過程中或聊天結束後檢舉對方。
+Pair Cooldown 為系統自動建立的暫時性雙方配對限制。
 
-#### 檢舉原因
+當兩名使用者已成功形成 Match，且後續聊天關係結束時，系統依照雙方目前所處的聊天階段建立對應的 Pair Cooldown。
 
-- 色情或性騷擾
-- 詐騙或可疑行為
-- 廣告或垃圾訊息
-- 不當言論
-- 惡意騷擾
-- 假帳號
-- 其他
+Pair Cooldown 有效期間內：
 
-#### 檢舉流程
+> **雙方不得再次互相配對。**
 
-1. 使用者送出檢舉。
-2. 系統保留該聊天室聊天紀錄作為審查依據。
-3. 後台管理員（或 AI 輔助審查）進行案件審核。
-4. 根據審核結果決定是否採取後續處置。
+Pair Cooldown 僅限制該兩名使用者彼此之間的配對，不影響雙方與其他使用者進行正常配對。
 
----
+例如：
 
-### 聊天紀錄保存
+```text
+User A ↔ User B
+      │
+      ▼
+成功 Match
+      │
+      ▼
+Chat Session
+      │
+      ▼
+聊天關係結束
+      │
+      ▼
+建立 Pair Cooldown
+      │
+      ▼
+Cooldown 有效期間
+      │
+      ├── User A 可正常配對其他使用者
+      ├── User B 可正常配對其他使用者
+      └── User A / User B 不得再次互相配對
+```
 
-- 一般聊天室於保存期限到達後自動永久刪除。
-- 若聊天室涉及檢舉案件，聊天紀錄將保留至案件審核完成後，再依平台保存政策處理。
-- 聊天紀錄僅供安全審查用途，不提供使用者查閱。
+Pair Cooldown 到期後，系統自動解除該組使用者之間的配對限制。
 
----
-
-### 黑名單（Blacklist）
-
-黑名單為平台安全機制之一，不提供使用者自行建立或解除。
-
-#### 建立方式
-
-僅於檢舉案件經平台審核確認違規後，由系統建立黑名單。
-
-#### 黑名單效果
-
-- 雙方將永久不再互相配對。
-- 系統可視違規程度，搭配限制功能、暫時停權或永久停權等處置。
-- 黑名單資料僅供配對系統及平台安全管理使用。
-
-#### 設計原則
-
-- 「不想繼續聊天」不等於「永久封鎖」。
-- 只有經平台確認存在安全或違規問題時，才建立永久性的配對限制。
-- 避免使用者濫用封鎖功能，維持配對規模與配對品質。
+若雙方帳號狀態及配對條件皆符合要求，未來仍可能再次透過 Matching System 配對成功。
 
 ---
 
-### 配對系統限制
+### 2. Pair Cooldown 設計目的
 
-配對系統於建立聊天室前，至少需排除以下對象：
+Pair Cooldown 的主要設計目的：
 
-- 自己
-- 已停權使用者
-- 已在聊天室中的使用者
-- 黑名單配對對象
-- 配對冷卻期間內的配對對象
+- 避免短時間內反覆配對到相同使用者。
+- 維持陌生人配對的新鮮感。
+- 降低聊天結束後立即再次遇到相同使用者的尷尬情況。
+- 避免使用者透過重複進出 Matching 快速重新遇到相同對象。
+- 在不永久排除任何正常使用者的前提下，提供合理的再次配對間隔。
+- 維持可配對使用者數量與整體配對效率。
 
-除上述限制外，其餘使用者皆可正常參與配對，由配對演算法依照配對條件進行排序與媒合。
+Pair Cooldown 屬於：
+
+> **配對流程控制機制。**
+
+Pair Cooldown 不代表任一方存在違規行為，也不屬於帳號處罰。
 
 ---
+
+### 3. Pair Cooldown 營運參數
+
+Pair Cooldown Duration 不寫死於核心配對邏輯。
+
+不同階段的 Pair Cooldown 時間統一透過：
+
+> **營運參數（Operational Parameters）**
+
+進行管理。
+
+平台可依實際營運狀況調整 Cooldown Duration，例如參考：
+
+- 活躍使用者數量。
+- 同時配對人數。
+- 平均配對等待時間。
+- 重複配對率。
+- 配對成功率。
+- 各配對模式的使用者數量。
+- 使用者實際配對行為。
+
+營運參數調整不需要改變 Matching 核心流程。
+
+---
+
+### 4. Standard Pair Cooldown
+
+一般配對成功後，若雙方關係於 Session #1 階段結束，系統建立：
+
+> **Standard Pair Cooldown**
+
+MVP 初始營運參數：
+
+> **8 小時**
+
+適用情況包含：
+
+- Match 成功後，其中一方立即離開。
+- Session #1 Early End。
+- Session #1 Normal End，且雙方未進入 Session #2。
+- Session #1 Abnormal End。
+- Continue Decision 未成立。
+
+流程：
+
+```text
+Match Success
+      │
+      ▼
+Session #1
+      │
+      ├── Early End
+      │
+      ├── Abnormal End
+      │
+      └── Normal End
+              │
+              ▼
+       Continue Decision
+              │
+              ▼
+       未進入 Session #2
+              │
+              ▼
+   Standard Pair Cooldown
+              │
+              ▼
+           8 小時
+        （MVP 初始值）
+```
+
+8 小時僅為 MVP 初始營運參數。
+
+平台後續可依實際營運資料調整，不視為永久固定值。
+
+---
+
+### 5. Session #2 Pair Cooldown
+
+若雙方已成功進入 Session #2，代表雙方於第一次聊天結束後皆曾主動選擇繼續交流。
+
+因此 Session #2 結束後，若最終未建立 Connection，系統使用較長的 Pair Cooldown。
+
+系統建立：
+
+> **Session #2 Pair Cooldown**
+
+MVP 初始營運參數：
+
+> **48 小時**
+
+適用情況包含：
+
+- Session #2 Early End。
+- Session #2 Abnormal End。
+- Session #2 Normal End，但 Connection Decision 未成立。
+- Session #2 結束後最終未建立 Connection。
+
+流程：
+
+```text
+Session #2
+    │
+    ├── Early End
+    │       │
+    │       └──────────────┐
+    │                      │
+    ├── Abnormal End       │
+    │       │              │
+    │       └──────────────┤
+    │                      │
+    └── Normal End         │
+            │              │
+            ▼              │
+   Connection Decision     │
+            │              │
+            ▼              │
+   Connection 未成立       │
+            │              │
+            └──────────────┘
+                    │
+                    ▼
+       Session #2 Pair Cooldown
+                    │
+                    ▼
+                 48 小時
+              （MVP 初始值）
+```
+
+Session #2 Cooldown 高於 Session #1，主要用於降低已進行兩輪聊天的使用者在短時間內再次遇見彼此的機率。
+
+---
+
+### 6. Connection 存續期間
+
+若 Session #2 Normal End 後，雙方於 Connection Decision 皆同意建立 Connection：
+
+```text
+Session #2
+    │
+    ▼
+Connection Decision
+    │
+    ▼
+雙方皆同意
+    │
+    ▼
+CONNECTED
+```
+
+此時：
+
+> **不建立 Pair Cooldown。**
+
+Connection 存續期間，雙方本身即屬於已建立聯繫的使用者，因此不得再次透過陌生人 Matching System 互相配對。
+
+概念：
+
+```text
+Connection(A, B) = CONNECTED
+        │
+        ▼
+CanMatch(A, B) = false
+```
+
+只要 Connection 仍然有效，Matching System 必須排除雙方互相配對。
+
+---
+
+### 7. Unconnect Pair Cooldown
+
+Connection 存續期間，任一方皆可執行 Unconnect。
+
+當任一方解除 Connection 後：
+
+1. Connection 結束。
+2. Connection Chat 停止作為有效聊天室使用。
+3. 系統建立 Extended Pair Cooldown。
+
+此類型定義為：
+
+> **Extended Pair Cooldown**
+
+MVP 初始營運參數：
+
+> **7 天**
+
+流程：
+
+```text
+CONNECTED
+    │
+    ▼
+Unconnect
+    │
+    ▼
+Connection End
+    │
+    ▼
+Extended Pair Cooldown
+    │
+    ▼
+7 天
+（MVP 初始值）
+```
+
+此設計主要避免雙方剛解除長期聯繫關係後，立即再次透過陌生人 Matching 遇到彼此。
+
+Extended Pair Cooldown 到期後：
+
+> 若雙方帳號狀態正常，且符合當下配對條件，未來仍可能再次互相配對。
+
+---
+
+### 8. Unconnect 後再次配對
+
+Extended Pair Cooldown 到期後，雙方不再受到該筆 Cooldown 限制。
+
+若未來再次配對成功：
+
+> **視為一個全新的 Match。**
+
+不得直接恢復過去的 Connection。
+
+雙方必須重新經過完整流程：
+
+```text
+Match
+  │
+  ▼
+Session #1
+  │
+  ▼
+Continue Decision
+  │
+  ▼
+Session #2
+  │
+  ▼
+Connection Decision
+  │
+  ▼
+雙方皆同意
+  │
+  ▼
+New Connection
+```
+
+過去曾經建立 Connection，不會使雙方跳過 Session #1、Session #2 或 Connection Decision。
+
+---
+
+### 9. 不建立 Pair Cooldown 的情況
+
+#### 9.1 等待配對階段取消
+
+使用者仍處於：
+
+```text
+Waiting for Match
+```
+
+且尚未成功與另一名使用者形成 Match 時，如果使用者取消 Matching：
+
+```text
+Waiting for Match
+       │
+       ▼
+Cancel Matching
+       │
+       ▼
+Leave Matching
+```
+
+不建立 Pair Cooldown。
+
+原因為：
+
+> 雙方尚未形成有效 Match，因此不存在需要建立 Pair Cooldown 的配對關係。
+
+---
+
+#### 9.2 Connection 成功建立
+
+若雙方成功建立 Connection：
+
+> 不建立 Pair Cooldown。
+
+由 Connection 關係本身排除雙方再次互相 Matching。
+
+直到 Connection 被解除後，才建立 Extended Pair Cooldown。
+
+---
+
+### 10. Abnormal End
+
+若 Chat Session 因非正常流程結束，例如：
+
+- 網路長時間中斷。
+- Reconnect Timeout。
+- App 異常關閉。
+- Server 判定 Session 無法繼續。
+- 帳號失去目前聊天資格。
+- 其他導致 Session 無法繼續的系統事件。
+
+仍須建立對應階段的 Pair Cooldown。
+
+系統不需要判斷：
+
+> 使用者是故意中斷，還是真實發生網路或裝置問題。
+
+統一依 Session 所在階段套用對應規則：
+
+```text
+Session #1 Abnormal End
+        │
+        ▼
+Standard Pair Cooldown
+        │
+        ▼
+8 小時
+
+Session #2 Abnormal End
+        │
+        ▼
+Session #2 Pair Cooldown
+        │
+        ▼
+48 小時
+```
+
+此規則可避免使用者透過關閉 App、刻意斷線或其他非正常結束方式繞過 Pair Cooldown。
+
+---
+
+### 11. Pair Cooldown 建立資料
+
+當符合 Pair Cooldown 建立條件時，系統建立雙方的 Pair Cooldown 關係。
+
+產品層級至少需要記錄以下概念資訊：
+
+| 資料 | 說明 |
+|---|---|
+| User A | 配對使用者 A |
+| User B | 配對使用者 B |
+| Cooldown Type | Cooldown 類型 |
+| Cooldown Reason | 建立原因 |
+| Created At | 建立時間 |
+| Expires At | 到期時間 |
+
+實際：
+
+- Database Schema
+- Index
+- Field Name
+- Storage Structure
+- Cache Strategy
+- Matching Query Strategy
+
+統一於後續技術規格書定義，本 PRD 不綁定實作方式。
+
+---
+
+### 12. Matching 時的 Cooldown 檢查
+
+Matching System 在建立 Match 前，必須確認兩名使用者之間不存在有效 Pair Cooldown。
+
+流程：
+
+```text
+Matching Candidate
+        │
+        ▼
+Check Pair Cooldown
+        │
+    ┌───┴────────┐
+    │            │
+    ▼            ▼
+Active       Expired / None
+    │            │
+    ▼            ▼
+排除配對      繼續 Matching
+```
+
+如果存在：
+
+```text
+Current Time < Expires At
+```
+
+則視為 Pair Cooldown 仍有效。
+
+雙方不得互相 Match。
+
+當：
+
+```text
+Current Time >= Expires At
+```
+
+Pair Cooldown 視為失效。
+
+不需要使用者或管理員額外解除。
+
+---
+
+### 13. Pair Cooldown 營運參數
+
+MVP 初始營運參數如下：
+
+| Cooldown Type | 主要適用情況 | MVP 初始值 |
+|---|---|---:|
+| Standard Pair Cooldown | Match / Session #1 結束 | 8 小時 |
+| Session #2 Pair Cooldown | Session #2 結束且未建立 Connection | 48 小時 |
+| Extended Pair Cooldown | Unconnect | 7 天 |
+
+以上數值皆屬於：
+
+> **Operational Parameters**
+
+平台可依營運狀況調整。
+
+---
+
+### 14. 營運參數修改規則
+
+Pair Cooldown 營運參數修改：
+
+> **僅影響修改後新建立的 Pair Cooldown。**
+
+不得回溯修改已經建立的 Cooldown 到期時間。
+
+例如：
+
+```text
+10:00
+
+User A / User B
+建立 Standard Pair Cooldown
+
+當時營運參數：
+8 小時
+
+Expires At：
+18:00
+```
+
+若：
+
+```text
+14:00
+
+營運將 Standard Pair Cooldown
+由 8 小時調整為 12 小時
+```
+
+User A / User B 原本的 Cooldown：
+
+```text
+Expires At = 18:00
+```
+
+維持不變。
+
+14:00 之後新建立的 Standard Pair Cooldown：
+
+```text
+Duration = 12 小時
+```
+
+使用新的營運參數。
+
+此設計避免營運參數調整造成既有配對限制突然縮短或延長。
+
+---
+
+### 15. Matching 排除條件
+
+Matching System 在正式建立 Match 前，至少需要排除：
+
+- 使用者自己。
+- 非 ACTIVE 狀態的使用者。
+- 已處於其他有效 Match 的使用者。
+- 已處於其他有效 Chat Session 的使用者。
+- 已與自己存在有效 Connection 的使用者。
+- 與自己存在有效 Pair Cooldown 的使用者。
+- 不符合目前配對模式條件的使用者。
+
+概念：
+
+```text
+CanMatch(A, B)
+
+A != B
+
+AND
+
+A.status = ACTIVE
+B.status = ACTIVE
+
+AND
+
+A / B 皆可進入 Matching
+
+AND
+
+NOT Connected(A, B)
+
+AND
+
+NOT ActivePairCooldown(A, B)
+
+AND
+
+符合目前 Matching Mode 條件
+```
+
+所有條件成立後，雙方才可進入後續配對演算法。
+
+---
+
+### 16. Report 暫不納入 v1 MVP
+
+FlashTalk v1 MVP 暫不提供：
+
+> **檢舉（Report）功能。**
+
+因此 v1 MVP 不需要建立：
+
+- Report Case。
+- Report Reason。
+- Report Snapshot。
+- Report Moderation。
+- Safety Isolation。
+- Report Admin Console。
+- 因 Report 產生的帳號處置流程。
+
+Report 屬於後續版本可重新評估的安全功能。
+
+是否加入以及具體產品流程，應依 FlashTalk MVP 上線後的：
+
+- 實際使用者規模。
+- 使用者回饋。
+- 平台營運需求。
+- 實際安全事件。
+- 聊天使用行為。
+
+重新進行產品設計。
+
+本章不預先定義後續版本的 Report 實作方式。
+
+---
+
+### 17. MVP Safety Scope
+
+FlashTalk v1 MVP 本階段的 Safety & Matching Protection Scope 收斂為：
+
+```text
+Safety & Matching Protection
+│
+└── Pair Cooldown
+    │
+    ├── Standard Pair Cooldown
+    │   └── 初始值：8 小時
+    │
+    ├── Session #2 Pair Cooldown
+    │   └── 初始值：48 小時
+    │
+    └── Extended Pair Cooldown
+        └── 初始值：7 天
+```
+
+Report 及其衍生的安全審核系統暫不納入 v1 MVP。
+
+---
+
+### 18. 核心規則
+
+| 項目 | v1 MVP 規則 |
+|---|---|
+| Pair Cooldown | 提供 |
+| Pair Cooldown 執行方式 | 系統自動執行 |
+| Cooldown Duration | 營運參數控制 |
+| Standard Pair Cooldown | 初始 8 小時 |
+| Session #2 Pair Cooldown | 初始 48 小時 |
+| Extended Pair Cooldown | 初始 7 天 |
+| 等待 Matching 時取消 | 不建立 Cooldown |
+| Match 成功後立即離開 | Standard Pair Cooldown |
+| Session #1 Early End | Standard Pair Cooldown |
+| Session #1 Normal End 且未續聊 | Standard Pair Cooldown |
+| Session #1 Abnormal End | Standard Pair Cooldown |
+| Session #2 Early End | Session #2 Pair Cooldown |
+| Session #2 Normal End 且未 Connection | Session #2 Pair Cooldown |
+| Session #2 Abnormal End | Session #2 Pair Cooldown |
+| Connection 成功 | 不建立 Cooldown |
+| Connection 存續期間 | 雙方不得互相 Matching |
+| Unconnect | Extended Pair Cooldown |
+| Cooldown 到期 | 自動失效 |
+| Cooldown 到期後 | 符合條件即可再次 Matching |
+| 再次 Match | 重新開始完整 Session 流程 |
+| 使用者自行設定 Cooldown | 不提供 |
+| 使用者自行解除 Cooldown | 不提供 |
+| 營運調整 Cooldown Duration | 提供 |
+| 營運參數修改影響既有 Cooldown | 否 |
+| Report | v1 MVP 暫不提供 |
+| Moderation | v1 MVP 暫不提供 |
+| Safety Admin Console | v1 MVP 暫不提供 |
 
 ## 十二、防騷擾設計（Anti-abuse）
 
@@ -3416,7 +4058,19 @@ Connection Decision
 
 ## 十三、產品流程（Product Flow）
 
-### 使用流程
+本章整合 FlashTalk v1 MVP 從登入、配對、限時聊天、續聊決策、Connection Decision、Connection Chat 至 Pair Cooldown 的完整產品流程。
+
+FlashTalk 的核心流程為：
+
+> **Matching → Session #1 → Continue Decision → Session #2 → Connection Decision → Connection**
+
+只有雙方皆表達相同的正向意願，關係才會進入下一個階段。
+
+---
+
+### 1. 核心使用流程
+
+FlashTalk 的主要使用流程如下：
 
 ```text
 開啟 App
@@ -3425,116 +4079,1296 @@ Connection Decision
 註冊 / 登入
     │
     ▼
-選擇配對方式
-(興趣配對 / 全隨機)
+Account = ACTIVE
     │
     ▼
-等待配對
+選擇配對模式
     │
-    ▼
-配對成功
+    ├── 興趣配對
     │
-    ▼
-15 分鐘聊天
-    │
-    ▼
-聊天室關閉
-    │
-    ▼
-是否再聊？
-    │
- ┌──┴──────────┐
- │             │
- ▼             ▼
-雙方同意       任一方不同意
- │             │
- ▼             ▼
-建立新聊天室   安全緩衝區
- │
- ▼
-15 分鐘聊天
- │
- ▼
-第二次聊天結束
- │
- ▼
-是否建立 Connection？
- │
-┌──────────────┴─────────────┐
-│                            │
-▼                            ▼
-雙方同意                  任一方不同意
-│                            │
-▼                            ▼
-建立 Connection        聊天紀錄進入安全緩衝區
-                             │
-                  ┌──────────┴─────────┐
-                  ▼                    ▼
-                有檢舉              無檢舉
-                  │                    │
-                  ▼                    ▼
-              人工審核          48 小時後永久刪除
+    └── 全隨機配對
+            │
+            ▼
+        等待配對
+            │
+            ▼
+       Match Success
+            │
+            ▼
+       Session #1
+         15 分鐘
+            │
+            ▼
+        Normal End
+            │
+            ▼
+    Continue Decision
+          60 秒
+            │
+       ┌────┴────┐
+       │         │
+       ▼         ▼
+   雙方同意     未成立
+       │         │
+       ▼         ▼
+ Session #2     End
+   15 分鐘       │
+       │         ▼
+       │    Pair Cooldown
+       │       8 小時
+       ▼
+   Normal End
+       │
+       ▼
+Connection Decision
+      120 秒
+       │
+  ┌────┴────┐
+  │         │
+  ▼         ▼
+雙方同意    未成立
+  │         │
+  ▼         ▼
+Connection  End
+  │         │
+  ▼         ▼
+Connection  Pair Cooldown
+   Chat       48 小時
 ```
 
 ---
 
-### Mermaid 流程圖
+### 2. 註冊與登入流程
+
+使用者必須完成帳號註冊與 Email 驗證，帳號狀態為 `ACTIVE` 後，才可正常進入 Matching。
+
+```text
+開啟 App
+    │
+    ▼
+是否已有帳號？
+    │
+ ┌──┴──┐
+ │     │
+否      是
+ │     │
+ ▼     ▼
+註冊   登入
+ │     │
+ ▼     │
+Email 驗證
+ │     │
+ ▼     │
+Account ACTIVE
+ │     │
+ └──┬──┘
+    ▼
+進入 FlashTalk
+    │
+    ▼
+可使用 Matching
+```
+
+若帳號仍處於：
+
+```text
+PENDING_VERIFICATION
+```
+
+則使用者必須先完成 Email 驗證。
+
+非 `ACTIVE` 帳號不得正常進入 Matching。
+
+---
+
+### 3. Matching 流程
+
+使用者進入 Matching 前，可選擇：
+
+1. 興趣配對
+2. 全隨機配對
+
+流程：
+
+```text
+選擇配對模式
+      │
+  ┌───┴─────────┐
+  │             │
+  ▼             ▼
+興趣配對      全隨機配對
+  │             │
+  └──────┬──────┘
+         ▼
+     Waiting
+         │
+         ▼
+   Find Candidate
+         │
+         ▼
+  Eligibility Check
+         │
+         ▼
+     可否配對？
+         │
+    ┌────┴────┐
+    │         │
+   可以      不可以
+    │         │
+    ▼         ▼
+Match Success  排除
+              │
+              ▼
+         繼續尋找候選人
+```
+
+---
+
+### 4. Matching Eligibility Check
+
+Matching System 建立 Match 前，至少需要確認：
+
+- 雙方皆為可正常 Matching 的帳號。
+- 使用者不得與自己配對。
+- 雙方皆未處於其他有效 Match。
+- 雙方皆未處於其他有效 Chat Session。
+- 雙方之間不存在有效 Connection。
+- 雙方之間不存在有效 Pair Cooldown。
+- 雙方符合目前 Matching Mode 的配對條件。
+
+概念：
+
+```text
+Candidate A / Candidate B
+          │
+          ▼
+A != B ?
+          │
+          ▼
+Both ACTIVE ?
+          │
+          ▼
+Both Matchable ?
+          │
+          ▼
+Already Connected ?
+          │
+          ▼
+Active Pair Cooldown ?
+          │
+          ▼
+Matching Mode Eligible ?
+          │
+          ▼
+     Match Success
+```
+
+任何一項條件不成立：
+
+> 不建立 Match，繼續尋找其他符合條件的使用者。
+
+---
+
+### 5. 興趣配對流程
+
+興趣配對依照雙方：
+
+> **共同興趣標籤數量**
+
+作為主要 Matching 依據。
+
+使用者可選擇 1～3 個官方興趣標籤。
+
+系統比較符合基本 Matching Eligibility 的使用者後，優先選擇共同興趣標籤數量較高的對象。
+
+```text
+Interest Matching
+        │
+        ▼
+選擇 1～3 個官方興趣標籤
+        │
+        ▼
+進入 Waiting
+        │
+        ▼
+尋找符合基本 Matching Eligibility
+的使用者
+        │
+        ▼
+比較共同興趣標籤數量
+        │
+        ▼
+共同標籤數較高者優先
+        │
+        ▼
+若最高共同標籤數相同
+        │
+        ▼
+Random
+        │
+        ▼
+Match Success
+```
+
+興趣配對：
+
+> **不設定 Matching Timeout。**
+
+使用者可持續等待，直到：
+
+- Match Success。
+- 使用者主動取消 Matching。
+- 使用者離開 Matching 流程。
+- 系統判定使用者已不符合 Matching 資格。
+
+等待 Matching 期間取消：
+
+> 不建立 Pair Cooldown。
+
+---
+
+### 6. 全隨機配對流程
+
+全隨機配對不以興趣標籤作為排序依據。
+
+系統先排除不符合 Matching Eligibility 的使用者，再從符合條件的使用者中進行隨機配對。
+
+```text
+Random Matching
+       │
+       ▼
+進入 Waiting
+       │
+       ▼
+Find Candidates
+       │
+       ▼
+Eligibility Check
+       │
+       ▼
+Eligible Candidates
+       │
+       ▼
+Random
+       │
+       ▼
+Match Success
+```
+
+---
+
+### 7. Session #1 流程
+
+Match Success 後，系統建立第一階段：
+
+> **Session #1**
+
+Session #1 時長：
+
+> **15 分鐘**
+
+流程：
+
+```text
+Match Success
+      │
+      ▼
+建立 Session #1
+      │
+      ▼
+1 對 1 即時聊天
+      │
+      ▼
+15 分鐘
+      │
+      ▼
+Session End
+```
+
+Session #1 可能存在三種結束方式：
+
+```text
+Session #1
+│
+├── Normal End
+│
+├── Early End
+│
+└── Abnormal End
+```
+
+---
+
+### 8. Session #1 Normal End
+
+Session #1 完整經過 15 分鐘後：
+
+```text
+Session #1
+    │
+    ▼
+15 分鐘結束
+    │
+    ▼
+Normal End
+    │
+    ▼
+Continue Decision
+```
+
+只有 `Normal End` 進入 Continue Decision。
+
+---
+
+### 9. Session #1 Early / Abnormal End
+
+若 Session #1 發生：
+
+```text
+Early End
+```
+
+或：
+
+```text
+Abnormal End
+```
+
+則不進入 Continue Decision。
+
+流程：
+
+```text
+Session #1
+    │
+    ├── Early End
+    │
+    └── Abnormal End
+            │
+            ▼
+        Session End
+            │
+            ▼
+Standard Pair Cooldown
+            │
+            ▼
+         8 小時
+```
+
+8 小時為 MVP 初始營運參數。
+
+---
+
+### 10. Continue Decision
+
+Session #1 Normal End 後，雙方進入：
+
+> **Continue Decision**
+
+目的：
+
+> 決定雙方是否願意再進行一次 15 分鐘聊天。
+
+Decision Duration：
+
+> **60 秒**
+
+採用：
+
+> **Blind Decision**
+
+雙方無法看到對方目前的選擇。
+
+可選擇：
+
+```text
+再聊 15 分鐘
+```
+
+或：
+
+```text
+結束聊天
+```
+
+流程：
+
+```text
+Continue Decision
+       │
+       ▼
+     60 秒
+       │
+   ┌───┴────┐
+   │        │
+雙方同意   Decision 未成立
+   │        │
+   ▼        ▼
+Session #2 End
+            │
+            ▼
+     Standard Pair Cooldown
+            │
+            ▼
+          8 小時
+```
+
+Decision 未成立包含：
+
+- 任一方選擇結束。
+- 任一方 Timeout。
+- 雙方皆未於時間內完成有效的正向 Decision。
+
+Timeout：
+
+> 視為不同意繼續。
+
+---
+
+### 11. Session #2 流程
+
+只有 Continue Decision 雙方皆同意時：
+
+> 建立 Session #2。
+
+Session #2 為新的 15 分鐘 Chat Session。
+
+```text
+Continue Decision
+       │
+       ▼
+Both Continue
+       │
+       ▼
+建立 Session #2
+       │
+       ▼
+15 分鐘聊天
+       │
+       ▼
+Session End
+```
+
+Session #2 同樣存在：
+
+- Normal End
+- Early End
+- Abnormal End
+
+---
+
+### 12. Session #1 與 Session #2 訊息關係
+
+Session #2 建立後：
+
+> **不顯示 Session #1 的聊天訊息。**
+
+因此使用者進入 Session #2 時，聊天室視覺上為新的聊天階段。
+
+```text
+Session #1 Messages
+        │
+        ▼
+Session #1 End
+        │
+        ▼
+Continue Decision
+        │
+        ▼
+Session #2
+        │
+        └── 不顯示 Session #1 Messages
+```
+
+Session #1 是否仍於 Server 暫時保存，不由本章流程決定。
+
+---
+
+### 13. Session #2 Normal End
+
+Session #2 完整經過 15 分鐘：
+
+```text
+Session #2
+    │
+    ▼
+15 分鐘結束
+    │
+    ▼
+Normal End
+    │
+    ▼
+Connection Decision
+```
+
+只有 Session #2 `Normal End`：
+
+> 進入 Connection Decision。
+
+---
+
+### 14. Session #2 Early / Abnormal End
+
+若 Session #2：
+
+- Early End
+- Abnormal End
+
+則：
+
+```text
+Session #2
+    │
+    ├── Early End
+    │
+    └── Abnormal End
+            │
+            ▼
+        Session End
+            │
+            ▼
+Session #2 Pair Cooldown
+            │
+            ▼
+         48 小時
+```
+
+不進入 Connection Decision。
+
+---
+
+### 15. Connection Decision
+
+Session #2 Normal End 後：
+
+> 雙方進入 Connection Decision。
+
+Decision Duration：
+
+> **120 秒**
+
+採用：
+
+> **Blind Decision**
+
+系統詢問：
+
+> **想繼續和對方保持聯繫嗎？**
+
+雙方可選擇：
+
+```text
+建立 Connection
+```
+
+或：
+
+```text
+就聊到這裡
+```
+
+流程：
+
+```text
+Connection Decision
+        │
+        ▼
+      120 秒
+        │
+    ┌───┴─────┐
+    │         │
+雙方同意    Decision 未成立
+    │         │
+    ▼         ▼
+Connection   End
+              │
+              ▼
+     Session #2 Pair Cooldown
+              │
+              ▼
+           48 小時
+```
+
+Timeout：
+
+> 視為不同意建立 Connection。
+
+---
+
+### 16. Blind Decision 共通規則
+
+Continue Decision 與 Connection Decision 皆使用 Blind Decision。
+
+共通規則：
+
+- 雙方獨立進行選擇。
+- 不顯示對方目前是否已完成選擇。
+- 不顯示對方選擇內容。
+- Decision 提交後不得修改。
+- 只有雙方皆選擇正向結果才成立。
+- 任一方明確選擇結束，可直接判定 Decision 不成立。
+- Timeout 視為負向結果。
+- 不向另一方透露是拒絕或 Timeout。
+- Decision 結果使用中性文字呈現。
+
+例如 Decision 未成立：
+
+> **本次聊天已結束。**
+
+不得顯示：
+
+> 對方拒絕了你。
+
+---
+
+### 17. Connection 建立流程
+
+只有：
+
+```text
+Session #2 Normal End
+        │
+        ▼
+Connection Decision
+        │
+        ▼
+雙方皆選擇 Connection
+```
+
+才建立 Connection。
+
+流程：
+
+```text
+Connection Created
+       │
+       ▼
+Connection = CONNECTED
+       │
+       ▼
+建立 / 開啟 Connection Chat
+       │
+       ▼
+可持續聊天
+```
+
+Connection Chat：
+
+- 不受 15 分鐘限制。
+- 不再進入 Continue Decision。
+- 不再進入 Connection Decision。
+- Connection 存續期間可持續聊天。
+
+---
+
+### 18. Session #2 與 Connection Chat 訊息延續
+
+成功建立 Connection 後：
+
+> **Session #2 的聊天訊息保留並延續至 Connection Chat。**
+
+Session #1 訊息：
+
+> **不重新顯示。**
+
+概念：
+
+```text
+Session #1
+Messages
+   │
+   └───────────────X
+                   不帶入 Connection Chat
+
+Session #2
+Messages
+   │
+   ▼
+Connection Created
+   │
+   ▼
+Connection Chat
+   │
+   ├── Session #2 Messages
+   │
+   ├── Connection Status Separator
+   │
+   └── New Connection Messages
+```
+
+Connection 建立位置應顯示狀態分隔資訊，例如：
+
+```text
+──────────────
+你們已建立 Connection
+現在可以繼續聊天
+──────────────
+```
+
+---
+
+### 19. Connection 存續流程
+
+Connection 建立後：
+
+```text
+CONNECTED
+    │
+    ▼
+Connection Chat
+    │
+    ▼
+持續聊天
+```
+
+Connection 存續期間：
+
+> 雙方不得透過陌生人 Matching 再次互相配對。
+
+Matching System 必須排除：
+
+```text
+Connected(A, B) = true
+```
+
+的雙方。
+
+---
+
+### 20. Unconnect 流程
+
+任一方皆可單方面解除 Connection。
+
+Unconnect：
+
+> 不需要另一方同意。
+
+流程：
+
+```text
+CONNECTED
+    │
+    ▼
+任一方 Unconnect
+    │
+    ▼
+Connection End
+    │
+    ▼
+Connection Chat 停止
+    │
+    ▼
+Extended Pair Cooldown
+    │
+    ▼
+7 天
+```
+
+7 天為 MVP 初始營運參數。
+
+---
+
+### 21. Pair Cooldown 流程
+
+FlashTalk v1 MVP 依不同關係階段使用三種 Pair Cooldown。
+
+```text
+Match / Session #1 End
+        │
+        ▼
+Standard Pair Cooldown
+        │
+        ▼
+8 小時
+
+Session #2 End
+且未建立 Connection
+        │
+        ▼
+Session #2 Pair Cooldown
+        │
+        ▼
+48 小時
+
+Connection
+    │
+    ▼
+Unconnect
+    │
+    ▼
+Extended Pair Cooldown
+    │
+    ▼
+7 天
+```
+
+所有 Duration 均為營運參數。
+
+---
+
+### 22. Pair Cooldown 到期
+
+Pair Cooldown 到期後：
+
+```text
+Pair Cooldown
+      │
+      ▼
+Expires At
+      │
+      ▼
+Cooldown Expired
+      │
+      ▼
+解除彼此配對限制
+```
+
+Cooldown Expired：
+
+> 不代表雙方立即重新配對。
+
+只代表：
+
+> 雙方重新具備未來互相 Matching 的可能性。
+
+雙方仍必須符合當下：
+
+- Account Status。
+- Matching Availability。
+- Matching Mode。
+- 其他 Matching Eligibility。
+
+---
+
+### 23. 再次配對流程
+
+如果曾經聊天或曾建立 Connection 的兩名使用者，在 Pair Cooldown 到期後再次 Match：
+
+> 視為新的配對。
+
+不得恢復：
+
+- 舊 Session。
+- 舊 Continue Decision。
+- 舊 Connection Decision。
+- 舊 Connection。
+
+重新開始：
+
+```text
+New Match
+   │
+   ▼
+Session #1
+   │
+   ▼
+Continue Decision
+   │
+   ▼
+Session #2
+   │
+   ▼
+Connection Decision
+   │
+   ▼
+New Connection
+```
+
+---
+
+### 24. 完整 End-to-End Flow
+
+```text
+開啟 App
+    │
+    ▼
+註冊 / 登入
+    │
+    ▼
+Account ACTIVE
+    │
+    ▼
+選擇 Matching Mode
+    │
+    ├── Interest Matching
+    │
+    └── Random Matching
+            │
+            ▼
+        Waiting
+            │
+            ▼
+     Eligibility Check
+            │
+            ▼
+       Match Success
+            │
+            ▼
+       Session #1
+         15 分鐘
+            │
+            ├── Early / Abnormal End
+            │          │
+            │          ▼
+            │     Pair Cooldown
+            │        8 小時
+            │
+            ▼
+        Normal End
+            │
+            ▼
+    Continue Decision
+          60 秒
+            │
+       ┌────┴─────────────┐
+       │                  │
+   雙方同意             未成立
+       │                  │
+       ▼                  ▼
+  Session #2         Pair Cooldown
+    15 分鐘              8 小時
+       │
+       ├── Early / Abnormal End
+       │          │
+       │          ▼
+       │     Pair Cooldown
+       │       48 小時
+       │
+       ▼
+   Normal End
+       │
+       ▼
+Connection Decision
+      120 秒
+       │
+  ┌────┴─────────────┐
+  │                  │
+雙方同意            未成立
+  │                  │
+  ▼                  ▼
+Connection       Pair Cooldown
+  │                48 小時
+  ▼
+Connection Chat
+  │
+  ▼
+持續聊天
+  │
+  ▼
+是否 Unconnect？
+  │
+  ├── 否
+  │    │
+  │    ▼
+  │  維持 Connection
+  │
+  └── 是
+       │
+       ▼
+  Connection End
+       │
+       ▼
+Extended Pair Cooldown
+       │
+       ▼
+      7 天
+       │
+       ▼
+Cooldown Expired
+       │
+       ▼
+未來重新具備
+互相 Matching 資格
+```
+
+---
+
+### 25. Mermaid 完整流程圖
 
 ```mermaid
 flowchart TD
 
 A[開啟 App]
--->B[註冊 / 登入]
--->C[選擇配對方式]
+--> B[註冊 / 登入]
+--> C[Account ACTIVE]
+--> D{選擇 Matching Mode}
 
-C-->D1[興趣配對]
-C-->D2[全隨機配對]
+D -->|興趣配對| E1[Interest Matching]
+D -->|全隨機配對| E2[Random Matching]
 
-D1-->E[等待配對]
-D2-->E
+E1 --> F[Waiting]
+E2 --> F
 
-E-->F[配對成功]
+F --> G[Matching Eligibility Check]
+G --> H[Match Success]
 
-F-->G[15 分鐘聊天]
+H --> I[Session #1<br/>15 分鐘]
 
-G-->H[聊天室關閉]
+I -->|Early / Abnormal End| J[Standard Pair Cooldown<br/>8 小時]
+I -->|Normal End| K[Continue Decision<br/>60 秒]
 
-H-->I{雙方是否再聊?}
+K -->|雙方同意| L[Session #2<br/>15 分鐘]
+K -->|未成立 / Timeout| J
 
-I--是-->J[建立新聊天室]
+L -->|Early / Abnormal End| M[Session #2 Pair Cooldown<br/>48 小時]
+L -->|Normal End| N[Connection Decision<br/>120 秒]
 
-J-->K[15 分鐘聊天]
+N -->|雙方同意| O[建立 Connection]
+N -->|未成立 / Timeout| M
 
-K-->L[第二次聊天結束]
+O --> P[Connection Chat]
 
-L-->M{雙方是否建立 Connection?}
+P -->|維持 Connection| P
+P -->|Unconnect| Q[Connection End]
 
-M--是-->N[建立 Connection]
+Q --> R[Extended Pair Cooldown<br/>7 天]
 
-M--否-->O[聊天室進入安全緩衝區]
+J --> S[Cooldown Expired]
+M --> S
+R --> S
 
-O-->P{是否有檢舉?}
-
-P--有-->Q[人工審核]
-
-P--無-->R[48 小時後永久刪除]
-
-I--否-->O
+S --> T[未來重新具備彼此 Matching 資格]
 ```
 
 ---
 
-## 十四、技術規劃（Technology Stack）
+### 26. 核心流程規則
 
-| 項目 | 技術 |
-| ------ | ------ |
-| 前端 | React Native |
-| API | RESTful API |
-| 即時通訊 | WebSocket |
-| 後端 | Node.js |
-| 資料庫 | PostgreSQL |
+| 流程 | v1 MVP 規則 |
+|---|---|
+| Matching Mode | 興趣配對 / 全隨機配對 |
+| 興趣配對 Timeout | 不設定 |
+| 興趣配對主要依據 | 共同興趣標籤數量 |
+| 興趣配對同分處理 | Random |
+| Waiting 階段取消 | 不建立 Pair Cooldown |
+| Match 成功 | 建立 Session #1 |
+| Session #1 | 15 分鐘 |
+| Session #1 Normal End | 進入 Continue Decision |
+| Session #1 Early / Abnormal End | Pair Cooldown 8 小時 |
+| Continue Decision | 60 秒 |
+| Continue Decision | Blind Decision |
+| Continue Decision Timeout | 視為不同意 |
+| Continue Decision 成功 | 雙方皆同意 |
+| Continue Decision 失敗 | Pair Cooldown 8 小時 |
+| Session #2 | 15 分鐘 |
+| Session #2 顯示 Session #1 訊息 | 否 |
+| Session #2 Normal End | 進入 Connection Decision |
+| Session #2 Early / Abnormal End | Pair Cooldown 48 小時 |
+| Connection Decision | 120 秒 |
+| Connection Decision | Blind Decision |
+| Connection Decision Timeout | 視為不同意 |
+| Connection 建立條件 | 雙方皆同意 |
+| Connection Decision 未成立 | Pair Cooldown 48 小時 |
+| Connection Chat | 無 15 分鐘限制 |
+| Connection Chat 歷史 | 保留 Session #2 可見訊息 |
+| Session #1 是否帶入 Connection | 否 |
+| Connection 存續期間 | 雙方不得互相 Matching |
+| Unconnect | 任一方皆可執行 |
+| Unconnect 是否需要對方同意 | 否 |
+| Unconnect 後 Cooldown | 7 天 |
+| Cooldown Duration | 營運參數 |
+| Cooldown 到期 | 自動失效 |
+| Cooldown 到期後 | 恢復未來互相 Matching 資格 |
+| 再次 Match | 從 Session #1 重新開始 |
+| Report | v1 MVP 暫不提供 |
+
+## 十四、技術規劃（Technology Architecture）
+
+### 14.1 技術規劃目標
+
+FlashTalk v1 MVP 的技術架構應優先滿足以下需求：
+
+1. 支援 1 對 1 即時陌生人配對。
+2. 支援興趣配對與全隨機配對。
+3. 支援即時聊天與 WebSocket 長連線。
+4. 支援 Session #1、Session #2、Decision、Connection 等產品狀態。
+5. 支援 Server Authoritative Timer。
+6. 支援 Pair Cooldown。
+7. 避免同一使用者同時被多名使用者配對。
+8. 支援使用者短暫斷線與重新連線。
+9. 保證重要狀態具有一致性與可恢復性。
+10. 保留未來水平擴充能力，但 MVP 階段避免過早導入 Microservices。
+
+FlashTalk v1 MVP 採用：
+
+> Modular Monolith + Independent Worker
+
+作為主要架構方向。
+
+MVP 階段不採用完整 Microservices Architecture。
 
 ---
+
+### 14.2 整體技術架構
+
+FlashTalk v1 MVP 建議技術組成如下：
+
+| Layer | Technology |
+|---|---|
+| Mobile App | React Native |
+| Language | TypeScript |
+| API Server | NestJS |
+| Runtime | Node.js |
+| REST API | HTTPS / JSON |
+| Realtime Communication | WebSocket / Socket.IO |
+| Primary Database | PostgreSQL |
+| ORM | Prisma |
+| Runtime / Matching State | Redis |
+| Authentication | JWT Access Token + Refresh Token |
+| Password Hashing | bcrypt |
+| Email Verification | Email Verification Service |
+| Object Storage | S3-compatible Object Storage |
+| Background Processing | Worker |
+| Scheduled Processing | Worker / Scheduler |
+| API Documentation | OpenAPI / Swagger |
+| Deployment | Docker |
+
+---
+
+### 14.3 Backend Architecture
+
+FlashTalk v1 MVP 後端採用 NestJS Modular Monolith。
+
+主要 Domain Module 規劃：
+
+- Auth Module
+- User Module
+- Matching Module
+- Chat Module
+- Session Module
+- Decision Module
+- Connection Module
+- Cooldown Module
+
+各 Module 維持明確 Domain Boundary。
+
+MVP 階段不將上述 Module 拆分為獨立 Microservice。
+
+當未來使用量、即時事件量或服務規模增加後，再評估將 Matching、Chat、Notification 或其他高負載服務獨立拆分。
+
+---
+
+### 14.4 API 與 Realtime Communication
+
+FlashTalk 同時使用：
+
+- REST API
+- WebSocket
+
+兩者負責不同類型的系統行為。
+
+#### REST API
+
+REST API 主要負責具有明確 Request / Response 特性的操作，例如：
+
+- Register
+- Login
+- Verify Email
+- Refresh Token
+- Get Profile
+- Update Profile
+- Get Interest Tags
+- Start Matching
+- Cancel Matching
+- Get Connection List
+- Unconnect
+
+REST API 不負責主要即時聊天訊息傳輸。
+
+#### WebSocket
+
+WebSocket 主要負責即時事件，例如：
+
+- Match Found
+- Session Started
+- Message Sent
+- Message Received
+- Reply Message
+- Session End
+- Decision State
+- Session #2 Started
+- Connection Decision
+- Connection Created
+- Connection Ended
+
+WebSocket Connection 不應作為 Session 唯一狀態來源。
+
+WebSocket 暫時斷線時，不代表 Session、Matching 或其他 Domain State 必須立即消失。
+
+---
+
+### 14.5 PostgreSQL
+
+FlashTalk v1 MVP 主要持久化資料庫採用 PostgreSQL。
+
+選擇 PostgreSQL 的主要原因為 FlashTalk Domain 具有大量明確關聯：
+
+User  
+↕  
+Match  
+↕  
+Conversation  
+↕  
+Session  
+↕  
+Decision  
+↕  
+Connection  
+↕  
+Pair Cooldown
+
+系統需要處理：
+
+- Relationship
+- Transaction
+- State Consistency
+- Unique Constraint
+- Concurrent State Transition
+
+因此 MVP 優先採用 PostgreSQL，而非以 MongoDB 作為主要資料庫。
+
+ORM 建議採用 Prisma。
+
+---
+
+### 14.6 Redis
+
+Redis 作為 FlashTalk 即時系統的重要 Runtime Infrastructure。
+
+主要用途包括：
+
+- Matching Waiting State
+- Matching Index
+- Online Presence
+- WebSocket Connection Mapping
+- Session Runtime State
+- Decision Runtime State
+- Short-lived State
+- Reconnect State
+- Distributed Lock
+- Atomic Matching Support
+
+Redis 不作為主要永久資料來源。
+
+重要 Domain Data 最終仍應由 PostgreSQL 保存。
+
+---
+
+### 14.7 Matching Mode
+
+FlashTalk v1 MVP 提供兩種 Matching Mode：
+
+- INTEREST
+- RANDOM
+
+兩種 Matching Mode 使用獨立的 Waiting Pool。
+
+```text
+INTEREST
+只能與 INTEREST 使用者配對
+
+RANDOM
+只能與 RANDOM 使用者配對
 
 ## MVP 功能總覽
 
@@ -3558,4 +5392,4 @@ I--否-->O
 
 | 版本 | 日期 | 說明 |
 |------|------|------|
-| v1.4.0 | 2026-09-14 | FlashTalk MVP 第一版產品需求規格書（PRD） |
+| v1.5.0 | 2026-09-19 | FlashTalk MVP 第一版產品需求規格書（PRD） |
