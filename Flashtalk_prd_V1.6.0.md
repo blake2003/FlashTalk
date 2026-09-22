@@ -1195,7 +1195,7 @@ Session #1 的 Server 資料保存期限仍由後續 Data Retention 規格統一
 ### 10. Chat Session 核心規則
 
 | 項目 | 規則 |
-|---|---|
+| --- | --- |
 | 陌生人聊天 Session 數量 | 1 個 |
 | Session #1 | 10 分鐘 |
 | Session #2 | 不提供 |
@@ -1324,7 +1324,7 @@ Decision 未成立時，統一使用中性結果，例如：
 ### 7. 核心規則
 
 | 項目 | 規則 |
-|---|---|
+| --- | --- |
 | Normal End | Session #1 10 分鐘自然到期 |
 | Early End | 使用者主動提前結束 |
 | Abnormal End | 斷線逾時、帳號或系統原因終止 |
@@ -1480,7 +1480,7 @@ Connection
 ### 13. Connection 核心規則
 
 | 項目 | 規則 |
-|---|---|
+| --- | --- |
 | Connection 觸發條件 | Session #1 Normal End |
 | Session #1 | 10 分鐘 |
 | Session #2 | 不提供 |
@@ -1553,7 +1553,7 @@ Connection 存續期間不建立 Pair Cooldown；由 Connection 關係本身排�
 所有 Cooldown Duration 均屬 Operational Parameters，可依活躍使用者數、配對等待時間、重複配對率與配對成功率調整。參數修改僅影響修改後新建立的 Pair Cooldown，不回溯改變既有 Expires At。
 
 | Cooldown Type | 主要適用情況 | MVP 初始值 |
-|---|---|---:|
+| --- | --- | ---: |
 | Standard Pair Cooldown | Session #1 Early / Abnormal End | 8 小時 |
 | Post-Chat Pair Cooldown | Session #1 Normal End 後未建立 Connection | 48 小時 |
 | Extended Pair Cooldown | Unconnect | 7 天 |
@@ -1609,7 +1609,7 @@ FlashTalk v1 MVP 暫不提供 Report、Moderation 與 Safety Admin Console。是
 ### 11. 核心規則
 
 | 項目 | v1 MVP 規則 |
-|---|---|
+| --- | --- |
 | Matching Protection | Pair Cooldown |
 | Anti-abuse | 與 Matching Protection 概念區分；本版不擴充功能 |
 | Standard Pair Cooldown | 初始 8 小時 |
@@ -1828,7 +1828,7 @@ Q --> R[未來重新具備彼此 Matching 資格]
 ### 12. 核心流程規則
 
 | 流程 | v1 MVP 規則 |
-|---|---|
+| --- | --- |
 | Matching Mode | 興趣配對 / 全隨機配對 |
 | 興趣配對 Timeout | 不設定 |
 | Match 成功 | 建立 Session #1 |
@@ -1879,7 +1879,7 @@ MVP 階段不採用完整 Microservices Architecture。
 FlashTalk v1 MVP 建議技術組成如下：
 
 | Layer | Technology |
-|---|---|
+| --- | --- |
 | Mobile App | React Native |
 | Language | TypeScript |
 | API Server | NestJS |
@@ -2048,7 +2048,7 @@ RANDOM
 ## MVP 功能總覽
 
 | 模組 | 功能 |
-|---|---|
+| --- | --- |
 | 帳號 | Email 註冊、登入、驗證碼 |
 | 個人資料 | 暱稱、頭像、興趣標籤 |
 | 配對 | 興趣配對、全隨機配對 |
@@ -2068,6 +2068,6 @@ RANDOM
 ## 版本資訊
 
 | 版本 | 日期 | 說明 |
-|------|------|------|
+| ------ | ------ | ------ |
 | v1.5.0 | 2026-09-19 | 前一版：雙 Session 流程 |
 | v1.6.0 | 2026-09-20 | 取消 Session #2；Session #1 改為 10 分鐘；Normal End 直接進入 Connection Decision；Connection 成功後延續 Session #1 聊天內容；Early End 規則維持並列入 v2 評估；區分 Pair Cooldown 與 Anti-abuse 概念 |

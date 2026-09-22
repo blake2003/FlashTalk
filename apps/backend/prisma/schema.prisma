@@ -1,0 +1,310 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AccountStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+  BANNED
+  DELETED
+}
+
+enum EmailVerificationPurpose {
+  VERIFY_EMAIL
+  RESET_PASSWORD
+}
+
+enum MatchingMode {
+  RANDOM
+  INTEREST
+}
+
+enum MatchingEntryStatus {
+  QUEUED
+  MATCHED
+  CANCELLED
+}
+
+enum ChatRoomType {
+  MATCH
+  CONNECTION
+}
+
+enum ChatRoomStatus {
+  ACTIVE
+  WAITING_CONNECTION_DECISION
+  CONNECTED
+  EARLY_ENDED
+  ABNORMAL_ENDED
+  CLOSED
+}
+
+enum ChatSessionStatus {
+  ACTIVE
+  ENDED
+  EARLY_ENDED
+  ABNORMAL_ENDED
+}
+
+enum SessionEndedReason {
+  EXPIRED
+  USER_LEFT
+  SYSTEM
+}
+
+enum MessageType {
+  TEXT
+  EMOJI
+}
+
+enum ConnectionDecisionValue {
+  YES
+  NO
+}
+
+enum ConnectionStatus {
+  ACTIVE
+  UNCONNECTED
+}
+
+enum PairCooldownType {
+  STANDARD
+  POST_CHAT
+  EXTENDED
+}
+
+enum PairCooldownReason {
+  CONNECTION_REJECTED
+  EARLY_END
+  UNCONNECT
+  OTHER
+}
+
+model User {
+  id              String        @id @default(uuid()) @db.Uuid
+  email           String        @unique @db.VarChar(320)
+  passwordHash    String        @map("password_hash") @db.VarChar(255)
+  emailVerifiedAt DateTime?     @map("email_verified_at") @db.Timestamptz(3)
+  status          AccountStatus @default(PENDING_VERIFICATION)
+  nickname        String?       @db.VarChar(50)
+  avatarUrl       String?       @map("avatar_url")
+  lastActiveAt    DateTime?     @map("last_active_at") @db.Timestamptz(3)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt       DateTime?     @map("deleted_at") @db.Timestamptz(3)
+
+  interests            UserInterest[]
+  emailVerifications   EmailVerification[]
+  refreshTokens        RefreshToken[]
+  matchingEntries      MatchingEntry[]
+  messages             Message[]           @relation("MessageSender")
+  connectionDecisions  ConnectionDecision[]
+  roomsAsUserA         ChatRoom[]          @relation("RoomUserA")
+  roomsAsUserB         ChatRoom[]          @relation("RoomUserB")
+  connectionsAsLow     Connection[]        @relation("ConnectionUserLow")
+  connectionsAsHigh    Connection[]        @relation("ConnectionUserHigh")
+  cooldownsAsLow       PairCooldown[]      @relation("CooldownUserLow")
+  cooldownsAsHigh      PairCooldown[]      @relation("CooldownUserHigh")
+
+  @@index([status])
+  @@index([lastActiveAt])
+  @@map("users")
+}
+
+model Interest {
+  id        String   @id @default(uuid()) @db.Uuid
+  code      String   @unique @db.VarChar(50)
+  name      String   @db.VarChar(50)
+  isActive  Boolean  @default(true) @map("is_active")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  users UserInterest[]
+
+  @@map("interests")
+}
+
+model UserInterest {
+  userId     String   @map("user_id") @db.Uuid
+  interestId String   @map("interest_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interest Interest @relation(fields: [interestId], references: [id], onDelete: Cascade)
+
+  @@id([userId, interestId])
+  @@map("user_interests")
+}
+
+model EmailVerification {
+  id           String                    @id @default(uuid()) @db.Uuid
+  userId       String                    @map("user_id") @db.Uuid
+  codeHash     String                    @map("code_hash") @db.VarChar(255)
+  purpose      EmailVerificationPurpose
+  expiresAt    DateTime                  @map("expires_at") @db.Timestamptz(3)
+  attemptCount Int                       @default(0) @map("attempt_count")
+  verifiedAt   DateTime?                 @map("verified_at") @db.Timestamptz(3)
+  createdAt    DateTime                  @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("email_verifications")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @map("token_hash") @db.VarChar(255)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(3)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(3)
+  deviceId  String?   @map("device_id") @db.VarChar(128)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("refresh_tokens")
+}
+
+model MatchingEntry {
+  id                   String              @id @default(uuid()) @db.Uuid
+  userId               String              @unique @map("user_id") @db.Uuid
+  mode                 MatchingMode
+  selectedInterestIds  String[]            @default([]) @map("selected_interest_ids")
+  status               MatchingEntryStatus @default(QUEUED)
+  createdAt            DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("matching_entries")
+}
+
+model ChatRoom {
+  id           String         @id @default(uuid()) @db.Uuid
+  roomType     ChatRoomType   @map("room_type")
+  matchMode    MatchingMode?  @map("match_mode")
+  userAId      String         @map("user_a_id") @db.Uuid
+  userBId      String         @map("user_b_id") @db.Uuid
+  status       ChatRoomStatus
+  connectionId String?        @unique @map("connection_id") @db.Uuid
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  connectedAt  DateTime?      @map("connected_at") @db.Timestamptz(3)
+  closedAt     DateTime?      @map("closed_at") @db.Timestamptz(3)
+  updatedAt    DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  userA               User                 @relation("RoomUserA", fields: [userAId], references: [id])
+  userB               User                 @relation("RoomUserB", fields: [userBId], references: [id])
+  connection          Connection?          @relation(fields: [connectionId], references: [id])
+  sessions            ChatSession[]
+  messages            Message[]
+  connectionDecisions ConnectionDecision[]
+  sourcedConnection   Connection?          @relation("SourceChatRoom")
+
+  @@index([userAId, status])
+  @@index([userBId, status])
+  @@map("chat_rooms")
+}
+
+model ChatSession {
+  id          String              @id @default(uuid()) @db.Uuid
+  chatRoomId  String              @map("chat_room_id") @db.Uuid
+  sessionNo   Int                 @default(1) @map("session_no") @db.SmallInt
+  status      ChatSessionStatus   @default(ACTIVE)
+  startedAt   DateTime            @map("started_at") @db.Timestamptz(3)
+  expiresAt   DateTime            @map("expires_at") @db.Timestamptz(3)
+  endedAt     DateTime?           @map("ended_at") @db.Timestamptz(3)
+  endedReason SessionEndedReason? @map("ended_reason")
+  createdAt   DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  chatRoom            ChatRoom             @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  messages            Message[]
+  connectionDecisions ConnectionDecision[]
+
+  @@unique([chatRoomId, sessionNo])
+  @@map("chat_sessions")
+}
+
+model Message {
+  id               String      @id @default(uuid()) @db.Uuid
+  chatRoomId       String      @map("chat_room_id") @db.Uuid
+  chatSessionId    String?     @map("chat_session_id") @db.Uuid
+  senderId         String      @map("sender_id") @db.Uuid
+  messageType      MessageType @map("message_type")
+  content          String
+  replyToMessageId String?     @map("reply_to_message_id") @db.Uuid
+  clientMessageId  String      @map("client_message_id") @db.Uuid
+  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  chatRoom       ChatRoom    @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  chatSession    ChatSession? @relation(fields: [chatSessionId], references: [id])
+  sender         User        @relation("MessageSender", fields: [senderId], references: [id])
+  replyToMessage Message?    @relation("MessageReply", fields: [replyToMessageId], references: [id])
+  replies        Message[]   @relation("MessageReply")
+
+  @@unique([senderId, clientMessageId])
+  @@index([chatRoomId, createdAt(sort: Desc)])
+  @@index([chatSessionId, createdAt])
+  @@map("messages")
+}
+
+model ConnectionDecision {
+  id            String                   @id @default(uuid()) @db.Uuid
+  chatRoomId    String                   @map("chat_room_id") @db.Uuid
+  chatSessionId String                   @map("chat_session_id") @db.Uuid
+  userId        String                   @map("user_id") @db.Uuid
+  decision      ConnectionDecisionValue
+  createdAt     DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  chatSession ChatSession @relation(fields: [chatSessionId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id])
+
+  @@unique([chatRoomId, userId])
+  @@map("connection_decisions")
+}
+
+model Connection {
+  id               String           @id @default(uuid()) @db.Uuid
+  userLowId        String           @map("user_low_id") @db.Uuid
+  userHighId       String           @map("user_high_id") @db.Uuid
+  sourceChatRoomId String           @unique @map("source_chat_room_id") @db.Uuid
+  status           ConnectionStatus @default(ACTIVE)
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  disconnectedAt   DateTime?        @map("disconnected_at") @db.Timestamptz(3)
+
+  userLow        User     @relation("ConnectionUserLow", fields: [userLowId], references: [id])
+  userHigh       User     @relation("ConnectionUserHigh", fields: [userHighId], references: [id])
+  sourceChatRoom ChatRoom @relation("SourceChatRoom", fields: [sourceChatRoomId], references: [id])
+  chatRoom       ChatRoom?
+
+  @@index([userLowId, userHighId, status])
+  @@map("connections")
+}
+
+model PairCooldown {
+  id         String             @id @default(uuid()) @db.Uuid
+  userLowId  String             @map("user_low_id") @db.Uuid
+  userHighId String             @map("user_high_id") @db.Uuid
+  type       PairCooldownType
+  reason     PairCooldownReason
+  startsAt   DateTime           @map("starts_at") @db.Timestamptz(3)
+  expiresAt  DateTime           @map("expires_at") @db.Timestamptz(3)
+  createdAt  DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  userLow  User @relation("CooldownUserLow", fields: [userLowId], references: [id])
+  userHigh User @relation("CooldownUserHigh", fields: [userHighId], references: [id])
+
+  @@index([userLowId, userHighId, expiresAt])
+  @@map("pair_cooldowns")
+}
