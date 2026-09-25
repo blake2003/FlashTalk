@@ -1,0 +1,23 @@
+{
+  "name": "flashtalk",
+  "version": "1.6.0",
+  "private": true,
+  "description": "FlashTalk v1.6.0 MVP monorepo",
+  "workspaces": [
+    "apps/backend",
+    "apps/mobile"
+  ],
+  "scripts": {
+    "dev:api": "npm run start:dev --workspace=backend",
+    "dev:app": "npm run start --workspace=mobile",
+    "build:api": "npm run build --workspace=backend",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:migrate": "npm run prisma:migrate --workspace=backend",
+    "db:seed": "npm run prisma:seed --workspace=backend",
+    "db:studio": "npm run prisma:studio --workspace=backend"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

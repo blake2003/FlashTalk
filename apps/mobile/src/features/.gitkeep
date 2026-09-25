@@ -1,0 +1,2 @@
+# Feature modules — business UI/logic lives here (auth, matching, chat, …)
+# Screens under app/ should stay thin and compose these features.

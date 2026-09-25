@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+**/node_modules/
+.npm/
+
+# Builds
+dist/
+build/
+.expo/
+web-build/
+*.tsbuildinfo
+
+# Env & secrets
+.env
+.env.local
+.env.*.local
+apps/backend/.env
+apps/mobile/.env
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs & coverage
+logs/
+*.log
+coverage/
+.nyc_output/
+
+# Prisma
+apps/backend/prisma/*.db
+apps/backend/prisma/*.db-journal
+
+# Native
+ios/Pods/
+android/.gradle/
+*.jks
+*.p8
+*.p12
+*.mobileprovision
