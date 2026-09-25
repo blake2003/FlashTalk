@@ -32,12 +32,12 @@
 
 ---
 
-## 一、系統架構（System Architecture）
+# 一、系統架構（System Architecture）
 
-### 1.1 技術棧
+## 1.1 技術棧
 
 | Layer | Technology | 用途 |
-| --- | --- | --- |
+|---|---|---|
 | Mobile App | React Native + Expo + TypeScript | iOS / Android App |
 | App Routing | Expo Router | App 導航 |
 | Server State | TanStack Query | REST API Cache / Server State |
@@ -57,7 +57,7 @@
 | Logging | NestJS Logger + structured JSON logger | 系統與錯誤日誌 |
 | Testing | Jest + Supertest + Socket.IO Client | Unit / Integration / E2E |
 
-### 1.2 MVP 部署拓樸
+## 1.2 MVP 部署拓樸
 
 ```mermaid
 flowchart LR
@@ -93,7 +93,7 @@ flowchart LR
     REST --> S3
 ```
 
-#### MVP Infrastructure
+### MVP Infrastructure
 
 ```text
 1 × Mobile App
@@ -107,7 +107,7 @@ flowchart LR
 
 ---
 
-### 1.3 Backend 模組
+## 1.3 Backend 模組
 
 ```text
 AppModule
@@ -126,7 +126,7 @@ AppModule
 └── CommonModule
 ```
 
-#### AuthModule
+### AuthModule
 
 負責：
 
@@ -138,7 +138,7 @@ AppModule
 - Logout
 - Account Status 檢查
 
-#### MatchingModule
+### MatchingModule
 
 負責：
 
@@ -153,7 +153,7 @@ AppModule
 - Atomic Match Creation
 - Cancel Matching
 
-#### ChatModule
+### ChatModule
 
 負責：
 
@@ -169,7 +169,7 @@ AppModule
 - Connection Decision
 - Connection 成立後 Room Transition
 
-#### ConnectionsModule
+### ConnectionsModule
 
 負責：
 
@@ -180,7 +180,7 @@ AppModule
 - Connection 唯一性
 - Connection 存續期間禁止再次配對
 
-#### PairCooldownModule
+### PairCooldownModule
 
 負責：
 
@@ -191,7 +191,7 @@ AppModule
 
 ---
 
-### 1.4 App 模組
+## 1.4 App 模組
 
 ```text
 src/
@@ -212,7 +212,7 @@ src/
 └── types/
 ```
 
-#### State Ownership
+### State Ownership
 
 **TanStack Query**
 
@@ -248,9 +248,9 @@ Room Closure Events
 
 ---
 
-## 二、核心 Domain 與狀態機
+# 二、核心 Domain 與狀態機
 
-### 2.1 使用者狀態
+## 2.1 使用者狀態
 
 ```text
 PENDING_VERIFICATION
@@ -269,7 +269,7 @@ DELETED
 
 ---
 
-### 2.2 Matching 狀態
+## 2.2 Matching 狀態
 
 ```text
 IDLE
@@ -282,14 +282,14 @@ CANCELLED
 
 ---
 
-### 2.3 Chat Room 類型
+## 2.3 Chat Room 類型
 
 ```text
 MATCH
 CONNECTION
 ```
 
-#### MATCH Room Status
+### MATCH Room Status
 
 ```text
 ACTIVE
@@ -302,7 +302,7 @@ CLOSED
 
 ---
 
-### 2.4 Chat Session 狀態
+## 2.4 Chat Session 狀態
 
 ```text
 ACTIVE
@@ -320,7 +320,7 @@ duration = 10 minutes
 
 ---
 
-### 2.5 核心狀態機
+## 2.5 核心狀態機
 
 ```mermaid
 stateDiagram-v2
@@ -348,9 +348,9 @@ stateDiagram-v2
 
 ---
 
-## 三、資料結構與資料庫（Data Models & Database）
+# 三、資料結構與資料庫（Data Models & Database）
 
-### 3.1 PostgreSQL 共通規則
+## 3.1 PostgreSQL 共通規則
 
 - Primary Key：`uuid`
 - Timestamp DB 欄位：`timestamptz`
@@ -362,7 +362,7 @@ stateDiagram-v2
 
 ---
 
-### 3.2 users
+## 3.2 users
 
 | Field | Type | Constraint | 說明 |
 |---|---|---|---|
@@ -388,7 +388,7 @@ INDEX(last_active_at)
 
 ---
 
-### 3.3 interests
+## 3.3 interests
 
 | Field | Type | Constraint |
 |---|---|---|
@@ -402,7 +402,7 @@ INDEX(last_active_at)
 
 ---
 
-### 3.4 user_interests
+## 3.4 user_interests
 
 | Field | Type | Constraint |
 |---|---|---|
@@ -425,7 +425,7 @@ Interest Matching Request = exactly 1..3 selected interests
 
 ---
 
-### 3.5 email_verifications
+## 3.5 email_verifications
 
 | Field | Type | 說明 |
 |---|---|---|
@@ -442,7 +442,7 @@ Interest Matching Request = exactly 1..3 selected interests
 
 ---
 
-### 3.6 refresh_tokens
+## 3.6 refresh_tokens
 
 | Field | Type | 說明 |
 |---|---|---|
@@ -456,7 +456,7 @@ Interest Matching Request = exactly 1..3 selected interests
 
 ---
 
-### 3.7 matching_entries
+## 3.7 matching_entries
 
 MVP 可使用 In-Memory Queue，但仍建議保留資料模型介面；正式持久化可於水平擴展時啟用。
 
@@ -474,7 +474,7 @@ MVP 可使用 In-Memory Queue，但仍建議保留資料模型介面；正式持
 
 ---
 
-### 3.8 chat_rooms
+## 3.8 chat_rooms
 
 | Field | Type | 說明 |
 |---|---|---|
@@ -500,7 +500,7 @@ INDEX(user_b_id, status)
 
 ---
 
-### 3.9 chat_sessions
+## 3.9 chat_sessions
 
 | Field | Type | 說明 |
 |---|---|---|
@@ -522,7 +522,7 @@ UNIQUE(chat_room_id, session_no)
 
 ---
 
-### 3.10 messages
+## 3.10 messages
 
 | Field | Type | 說明 |
 |---|---|---|
@@ -557,7 +557,7 @@ No external URL / social link
 
 ---
 
-### 3.11 connection_decisions
+## 3.11 connection_decisions
 
 | Field | Type | 說明 |
 |---|---|---|
@@ -579,7 +579,7 @@ Server 僅在雙方皆有 Decision 後計算結果。
 
 ---
 
-### 3.12 connections
+## 3.12 connections
 
 | Field | Type | 說明 |
 |---|---|---|
@@ -606,7 +606,7 @@ UNIQUE(user_low_id, user_high_id, status) // 實作時可用 partial unique inde
 
 ---
 
-### 3.13 pair_cooldowns
+## 3.13 pair_cooldowns
 
 | Field | Type | 說明 |
 |---|---|---|
@@ -629,7 +629,7 @@ Cooldown 實際時長依 PRD 所述營運參數配置，不硬編碼。
 
 ---
 
-### 3.14 ER Diagram
+## 3.14 ER Diagram
 
 ```mermaid
 erDiagram
@@ -653,9 +653,9 @@ erDiagram
 
 ---
 
-## 四、Matching Algorithm
+# 四、Matching Algorithm
 
-### 4.1 Matching Eligibility
+## 4.1 Matching Eligibility
 
 候選 User 必須同時符合：
 
@@ -671,7 +671,7 @@ No safety exclusion / block restriction
 
 ---
 
-### 4.2 Interest Matching
+## 4.2 Interest Matching
 
 Request：
 
@@ -698,7 +698,7 @@ no automatic fallback to RANDOM
 
 ---
 
-### 4.3 Random Matching
+## 4.3 Random Matching
 
 從目前符合 Eligibility 的 RANDOM Queue 候選人中隨機選擇。
 
@@ -712,7 +712,7 @@ secure/random shuffle
 
 ---
 
-### 4.4 Atomic Match
+## 4.4 Atomic Match
 
 配對必須防止：
 
@@ -747,9 +747,9 @@ Redis distributed lock / atomic Lua script
 
 ---
 
-## 五、Chat Session 與 Server Timer
+# 五、Chat Session 與 Server Timer
 
-### 5.1 Session #1
+## 5.1 Session #1
 
 ```text
 duration = 10 minutes
@@ -772,7 +772,7 @@ remaining = expiresAt - serverNow
 
 ---
 
-### 5.2 App Background / Disconnect
+## 5.2 App Background / Disconnect
 
 以下情況均不暫停 Timer：
 
@@ -797,7 +797,7 @@ decision state
 
 ---
 
-### 5.3 Session Expiry
+## 5.3 Session Expiry
 
 到期時：
 
@@ -817,9 +817,9 @@ emit chat.connectionDecisionRequired
 
 ---
 
-## 六、Connection Decision
+# 六、Connection Decision
 
-### 6.1 Decision
+## 6.1 Decision
 
 Client 只可送：
 
@@ -840,7 +840,7 @@ decision not finalized
 
 ---
 
-### 6.2 Result
+## 6.2 Result
 
 ```text
 A = YES + B = YES
@@ -864,9 +864,9 @@ ANY NO
 
 ---
 
-## 七、訊息系統（Messaging）
+# 七、訊息系統（Messaging）
 
-### 7.1 支援
+## 7.1 支援
 
 ```text
 Text
@@ -875,7 +875,7 @@ Reply
 Typing Indicator
 ```
 
-### 7.2 不支援
+## 7.2 不支援
 
 ```text
 Image
@@ -889,7 +889,7 @@ Read Receipt
 
 ---
 
-### 7.3 Send Message Pipeline
+## 7.3 Send Message Pipeline
 
 ```text
 Socket Event
@@ -907,7 +907,7 @@ Socket Event
 
 ---
 
-### 7.4 Message Delivery State
+## 7.4 Message Delivery State
 
 Client UI 可使用：
 
@@ -921,9 +921,9 @@ FAILED
 
 ---
 
-## 八、API 與介面設計（API & Interface Design）
+# 八、API 與介面設計（API & Interface Design）
 
-### 8.1 Base URL
+## 8.1 Base URL
 
 ```text
 /api/v1
@@ -959,9 +959,9 @@ Authorization: Bearer <accessToken>
 
 ---
 
-### 8.2 Auth API
+## 8.2 Auth API
 
-#### POST /auth/register
+### POST /auth/register
 
 Request：
 
@@ -985,7 +985,7 @@ Response：
 }
 ```
 
-#### POST /auth/verify-email
+### POST /auth/verify-email
 
 ```json
 {
@@ -994,7 +994,7 @@ Response：
 }
 ```
 
-#### POST /auth/resend-verification
+### POST /auth/resend-verification
 
 ```json
 {
@@ -1002,7 +1002,7 @@ Response：
 }
 ```
 
-#### POST /auth/login
+### POST /auth/login
 
 ```json
 {
@@ -1028,7 +1028,7 @@ Response：
 }
 ```
 
-#### POST /auth/refresh
+### POST /auth/refresh
 
 ```json
 {
@@ -1036,7 +1036,7 @@ Response：
 }
 ```
 
-#### POST /auth/logout
+### POST /auth/logout
 
 ```json
 {
@@ -1044,7 +1044,7 @@ Response：
 }
 ```
 
-#### POST /auth/forgot-password
+### POST /auth/forgot-password
 
 ```json
 {
@@ -1052,7 +1052,7 @@ Response：
 }
 ```
 
-#### POST /auth/reset-password
+### POST /auth/reset-password
 
 ```json
 {
@@ -1064,7 +1064,7 @@ Response：
 
 ---
 
-### 8.3 User API
+## 8.3 User API
 
 ```http
 GET /users/me
@@ -1074,7 +1074,7 @@ POST /users/me/avatar
 DELETE /users/me
 ```
 
-#### PUT /users/me
+### PUT /users/me
 
 ```json
 {
@@ -1082,7 +1082,7 @@ DELETE /users/me
 }
 ```
 
-#### PUT /users/me/interests
+### PUT /users/me/interests
 
 ```json
 {
@@ -1095,7 +1095,7 @@ DELETE /users/me
 
 ---
 
-### 8.4 Interest API
+## 8.4 Interest API
 
 ```http
 GET /interests
@@ -1118,7 +1118,7 @@ Response：
 
 ---
 
-### 8.5 Chat API
+## 8.5 Chat API
 
 ```http
 GET /chat-rooms/:roomId
@@ -1129,7 +1129,7 @@ GET /chat-rooms/:roomId/messages?cursor=<cursor>&limit=50
 
 ---
 
-### 8.6 Connection API
+## 8.6 Connection API
 
 ```http
 GET /connections
@@ -1141,7 +1141,7 @@ DELETE /connections/:connectionId
 
 ---
 
-## 九、WebSocket Interface
+# 九、WebSocket Interface
 
 Namespace：
 
@@ -1155,7 +1155,7 @@ Handshake：
 auth.accessToken
 ```
 
-### 9.1 Client → Server
+## 9.1 Client → Server
 
 ```text
 matching.join
@@ -1171,7 +1171,7 @@ chat.sync
 
 ---
 
-### 9.2 Server → Client
+## 9.2 Server → Client
 
 ```text
 matching.waiting
@@ -1192,7 +1192,7 @@ system.error
 
 ---
 
-### 9.3 matching.join
+## 9.3 matching.join
 
 Interest：
 
@@ -1222,7 +1222,7 @@ Ack：
 
 ---
 
-### 9.4 matching.found
+## 9.4 matching.found
 
 ```json
 {
@@ -1244,7 +1244,7 @@ Ack：
 
 ---
 
-### 9.5 chat.sendMessage
+## 9.5 chat.sendMessage
 
 ```json
 {
@@ -1271,7 +1271,7 @@ ACK：
 
 ---
 
-### 9.6 chat.connectionDecision
+## 9.6 chat.connectionDecision
 
 ```json
 {
@@ -1301,7 +1301,7 @@ Result：
 
 ---
 
-### 9.7 chat.sync
+## 9.7 chat.sync
 
 Reconnect Request：
 
@@ -1331,9 +1331,9 @@ Response：
 
 ---
 
-## 十、非功能性需求（Non-functional Requirements）
+# 十、非功能性需求（Non-functional Requirements）
 
-### 10.1 Performance
+## 10.1 Performance
 
 MVP 目標值：
 
@@ -1350,7 +1350,7 @@ MVP 目標值：
 
 ---
 
-### 10.2 Concurrency
+## 10.2 Concurrency
 
 MVP 第一階段建議壓測基準：
 
@@ -1373,7 +1373,7 @@ Scale Up
 
 ---
 
-### 10.3 Security
+## 10.3 Security
 
 必須：
 
@@ -1396,7 +1396,7 @@ Scale Up
 
 ---
 
-### 10.4 Rate Limit 建議
+## 10.4 Rate Limit 建議
 
 可配置，不硬編碼：
 
@@ -1415,7 +1415,7 @@ chat.typing
 
 ---
 
-### 10.5 Logging
+## 10.5 Logging
 
 Structured JSON：
 
@@ -1453,7 +1453,7 @@ DEBUG (non-production)
 
 ---
 
-### 10.6 Observability
+## 10.6 Observability
 
 至少提供：
 
@@ -1478,9 +1478,9 @@ reconnect_rate
 
 ---
 
-### 10.7 Fault Tolerance
+## 10.7 Fault Tolerance
 
-#### Database failure
+### Database failure
 
 ```text
 Reject state-changing operation
@@ -1488,7 +1488,7 @@ Do not emit success before transaction commit
 Return retryable system error
 ```
 
-#### Email provider failure
+### Email provider failure
 
 ```text
 Account remains PENDING_VERIFICATION
@@ -1496,14 +1496,14 @@ Return EMAIL_SEND_FAILED
 Allow controlled resend
 ```
 
-#### Object storage failure
+### Object storage failure
 
 ```text
 Do not update avatar_url
 Return upload failure
 ```
 
-#### Backend restart
+### Backend restart
 
 MVP 單 Instance 重啟會失去 In-Memory Matching Queue，因此：
 
@@ -1515,9 +1515,9 @@ server recalculates expired sessions from expires_at
 
 ---
 
-## 十一、邊界情況與例外處理（Edge Cases & Error Handling）
+# 十一、邊界情況與例外處理（Edge Cases & Error Handling）
 
-### 11.1 Matching Race Condition
+## 11.1 Matching Race Condition
 
 問題：
 
@@ -1536,7 +1536,7 @@ only one match can commit
 
 ---
 
-### 11.2 User Cancels While Match Is Being Created
+## 11.2 User Cancels While Match Is Being Created
 
 若 Match transaction 已 commit：
 
@@ -1554,7 +1554,7 @@ entry removed
 
 ---
 
-### 11.3 Duplicate matching.join
+## 11.3 Duplicate matching.join
 
 回傳目前 Queue State，不建立第二個 Entry：
 
@@ -1564,7 +1564,7 @@ MATCH_ALREADY_WAITING
 
 ---
 
-### 11.4 Socket Disconnect During Matching
+## 11.4 Socket Disconnect During Matching
 
 短暫斷線：
 
@@ -1583,7 +1583,7 @@ Grace Period 為可配置參數。
 
 ---
 
-### 11.5 Socket Disconnect During Chat
+## 11.5 Socket Disconnect During Chat
 
 ```text
 Session timer continues
@@ -1600,13 +1600,13 @@ Server immediately returns session ENDED
 
 ---
 
-### 11.6 App Background
+## 11.6 App Background
 
 不暫停 10 分鐘 Timer。
 
 ---
 
-### 11.7 Duplicate Message
+## 11.7 Duplicate Message
 
 使用：
 
@@ -1623,7 +1623,7 @@ do not insert duplicate
 
 ---
 
-### 11.8 Out-of-order Messages
+## 11.8 Out-of-order Messages
 
 排序依：
 
@@ -1641,7 +1641,7 @@ created_at + id
 
 ---
 
-### 11.9 Message Sent Exactly at Expiry
+## 11.9 Message Sent Exactly at Expiry
 
 Server 收到時檢查：
 
@@ -1659,7 +1659,7 @@ Client 顯示失敗，不得自行補寫。
 
 ---
 
-### 11.10 Both Users Submit Decision Concurrently
+## 11.10 Both Users Submit Decision Concurrently
 
 使用 Transaction / Row Lock：
 
@@ -1674,7 +1674,7 @@ Connection Unique Constraint 作第二層防護。
 
 ---
 
-### 11.11 One User YES, Other No Response
+## 11.11 One User YES, Other No Response
 
 PRD 未明確定義 Decision 等待逾時時間。
 
@@ -1688,7 +1688,7 @@ connection_decision_expires_at
 
 ---
 
-### 11.12 Early End
+## 11.12 Early End
 
 使用者主動離開：
 
@@ -1703,13 +1703,13 @@ Early End 是否提供 Connection Decision，依 v1.6.0 PRD 的產品規則執�
 
 ---
 
-### 11.13 Existing Connection Pair Attempts Matching
+## 11.13 Existing Connection Pair Attempts Matching
 
 直接排除，不進候選集合。
 
 ---
 
-### 11.14 Unconnect
+## 11.14 Unconnect
 
 ```text
 connection.status => UNCONNECTED
@@ -1722,7 +1722,7 @@ Cooldown 到期後才重新具備互相配對資格。
 
 ---
 
-### 11.15 Traffic Spike
+## 11.15 Traffic Spike
 
 依序：
 
@@ -1738,9 +1738,9 @@ Rate Limit
 
 ---
 
-## 十二、錯誤碼（Error Codes）
+# 十二、錯誤碼（Error Codes）
 
-### Auth
+## Auth
 
 ```text
 AUTH_EMAIL_ALREADY_EXISTS
@@ -1757,7 +1757,7 @@ AUTH_ACCOUNT_BANNED
 AUTH_ACCOUNT_DELETED
 ```
 
-### User
+## User
 
 ```text
 USER_NOT_FOUND
@@ -1766,7 +1766,7 @@ USER_INTEREST_INVALID
 USER_AVATAR_INVALID
 ```
 
-### Matching
+## Matching
 
 ```text
 MATCH_ALREADY_WAITING
@@ -1779,7 +1779,7 @@ MATCH_CONNECTION_EXISTS
 MATCH_PAIR_COOLDOWN_ACTIVE
 ```
 
-### Chat
+## Chat
 
 ```text
 CHAT_ROOM_NOT_FOUND
@@ -1794,7 +1794,7 @@ CHAT_EXTERNAL_LINK_NOT_ALLOWED
 CHAT_REPLY_MESSAGE_NOT_FOUND
 ```
 
-### Connection
+## Connection
 
 ```text
 CONNECTION_DECISION_NOT_ALLOWED
@@ -1804,7 +1804,7 @@ CONNECTION_NOT_FOUND
 CONNECTION_NOT_PARTICIPANT
 ```
 
-### System
+## System
 
 ```text
 VALIDATION_ERROR
@@ -1818,11 +1818,11 @@ INTERNAL_SERVER_ERROR
 
 ---
 
-## 十三、Transaction Boundary
+# 十三、Transaction Boundary
 
 以下必須使用 DB Transaction：
 
-#### Register
+### Register
 
 ```text
 create user
@@ -1831,7 +1831,7 @@ create verification record
 
 Email 發送在 transaction commit 後執行。
 
-#### Match Found
+### Match Found
 
 ```text
 validate pair
@@ -1839,7 +1839,7 @@ create chat_room
 create chat_session
 ```
 
-#### Connection Decision Finalization
+### Connection Decision Finalization
 
 ```text
 save decision
@@ -1848,7 +1848,7 @@ create connection OR cooldown
 update room
 ```
 
-#### Unconnect
+### Unconnect
 
 ```text
 update connection
@@ -1858,7 +1858,7 @@ create cooldown
 
 ---
 
-## 十四、資料保存與刪除
+# 十四、資料保存與刪除
 
 v1.6.0 PRD 已明確帳號刪除不代表安全相關資料立即物理刪除，但尚未完整定義所有 Data Retention 天數。
 
@@ -1881,7 +1881,7 @@ Physical deletion via scheduled retention job later
 
 ---
 
-## 十五、開發環境與設定
+# 十五、開發環境與設定
 
 Environment：
 
@@ -1922,9 +1922,9 @@ SOCKET_DISCONNECT_GRACE_SECONDS
 
 ---
 
-## 十六、開發與測試計畫（Implementation & Testing Plan）
+# 十六、開發與測試計畫（Implementation & Testing Plan）
 
-### 16.1 建議開發階段
+## 16.1 建議開發階段
 
 | Phase | 工作內容 | 預估 |
 |---|---|---:|
@@ -1943,7 +1943,7 @@ SOCKET_DISCONNECT_GRACE_SECONDS
 
 ---
 
-### 16.2 Unit Test
+## 16.2 Unit Test
 
 目標 Domain Logic Coverage：
 
@@ -1959,7 +1959,7 @@ SOCKET_DISCONNECT_GRACE_SECONDS
 
 必測：
 
-#### Auth
+### Auth
 
 - register duplicate email
 - password hash
@@ -1967,7 +1967,7 @@ SOCKET_DISCONNECT_GRACE_SECONDS
 - refresh token rotation / revoke
 - account status guard
 
-#### Matching
+### Matching
 
 - self exclusion
 - inactive user exclusion
@@ -1982,7 +1982,7 @@ SOCKET_DISCONNECT_GRACE_SECONDS
 - cancel
 - concurrent match protection
 
-#### Chat
+### Chat
 
 - participant authorization
 - 10-minute expiry
@@ -1994,7 +1994,7 @@ SOCKET_DISCONNECT_GRACE_SECONDS
 - message after expiry rejected
 - typing event not persisted
 
-#### Connection
+### Connection
 
 - YES + YES => one Connection
 - YES + NO => no Connection
@@ -2005,7 +2005,7 @@ SOCKET_DISCONNECT_GRACE_SECONDS
 
 ---
 
-### 16.3 Integration Test
+## 16.3 Integration Test
 
 使用：
 
@@ -2034,7 +2034,7 @@ Register
 
 ---
 
-### 16.4 E2E Test
+## 16.4 E2E Test
 
 至少建立兩個真實測試 Client：
 
@@ -2060,7 +2060,7 @@ User B
 
 ---
 
-### 16.5 Load Test
+## 16.5 Load Test
 
 工具可使用：
 
@@ -2096,7 +2096,7 @@ Duplicate connection / duplicate room anomalies
 
 ---
 
-## 十七、CI/CD 與品質門檻
+# 十七、CI/CD 與品質門檻
 
 Pull Request：
 
@@ -2137,7 +2137,7 @@ Then remove deprecated schema in later release
 
 ---
 
-## 十八、MVP 驗收標準
+# 十八、MVP 驗收標準
 
 MVP 技術驗收至少需全部成立：
 
@@ -2166,7 +2166,7 @@ MVP 技術驗收至少需全部成立：
 
 ---
 
-## 十九、PRD 尚待產品確認的技術 Blocking / Open Questions
+# 十九、PRD 尚待產品確認的技術 Blocking / Open Questions
 
 以下項目在 v1.6.0 PRD 中未完全量化，工程實作前應建立可配置參數或補充決策：
 
@@ -2188,7 +2188,7 @@ MVP 技術驗收至少需全部成立：
 
 ---
 
-## 二十、MVP 不納入範圍
+# 二十、MVP 不納入範圍
 
 依 v1.6.0 產品方向，本技術規格不將下列項目列為 MVP 核心實作：
 
@@ -2230,7 +2230,7 @@ v1.6.0 PRD 已標示 Report 暫不納入 v1 MVP；
 
 ---
 
-## 二十一、最終架構總覽
+# 二十一、最終架構總覽
 
 ```text
 React Native + Expo
@@ -2283,7 +2283,7 @@ Connection Decision
 
 ---
 
-### 文件結論
+## 文件結論
 
 FlashTalk v1.6.0 MVP 的技術核心應維持在一個可控的 **Modular Monolith + PostgreSQL + Socket.IO** 架構中。
 

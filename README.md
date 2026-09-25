@@ -37,6 +37,8 @@ FlashTalk/
 docker compose up -d postgres
 ```
 
+> 若本機已有 PostgreSQL 佔用 `5432`，Compose 改映射至 **`5433`**。`DATABASE_URL` 請使用 `127.0.0.1:5433`（見 `apps/backend/.env.example`）。
+
 ### 2. Backend
 
 ```bash

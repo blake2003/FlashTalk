@@ -26,7 +26,10 @@ export class ApiExceptionFilter implements ExceptionFilter {
       } else if (typeof body === 'object' && body !== null) {
         const obj = body as Record<string, unknown>;
         message = (obj.message as string) ?? message;
-        code = (obj.error as string) ?? exception.name;
+        code =
+          (typeof obj.code === 'string' && obj.code) ||
+          (typeof obj.error === 'string' && obj.error) ||
+          exception.name;
         details = obj.details ?? null;
         if (Array.isArray(obj.message)) {
           message = 'Validation failed';
